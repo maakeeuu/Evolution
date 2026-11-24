@@ -1,0 +1,9 @@
+{
+  "name": "Evolution.Articulated.Unity",
+  "rootNamespace": "Evolution.Articulated.Unity",
+  "references": [
+    "Evolution.Articulated.Core",
+    "Evolution.Source.Core"
+  ],
+  "autoReferenced": true
+}

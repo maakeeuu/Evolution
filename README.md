@@ -35,4 +35,12 @@ EV-CP1 интегрирован в Assets/Evolution/EVCP1/; каноническ
 Полный промпт и критерии этапа: [EV_CP2_SPEC.md](docs/EV_CP2_SPEC.md).  
 Краткая инструкция для нового ChatGPT/агента: [HANDOFF_EV_CP2.md](docs/HANDOFF_EV_CP2.md).
 
-**Статус реализации EV-CP2 на момент этого handoff-коммита: ещё не начата.**
+**Первый физический срез реализован в исходниках и интегрирован отдельно; Unity-проверка EV-CP2 пока не выполнена.**
+
+- Канонический код: `Evolution_Source/Articulated/`, runtime-копия: `Assets/Evolution/EVCP2/`.
+- Процедурная цепь, ограниченные HingeJoint2D и парные pull-only мышечные силы.
+- Отдельный диагностический wave-driver (не обучение), skeleton/muscle view и первая patch-оболочка.
+- Быстрый вход: Empty Scene → пустой объект → **ArticulatedDemo2D** → Play локально.
+- Подробный gate, автоматические/неподтверждённые проверки и ограничения:
+  [EV_CP2_VALIDATION.md](docs/EV_CP2_VALIDATION.md).
+- EV-CP2 целиком не завершён: гладкая глобальная кожа, рост/ветвление и освоенная локомоция не заявляются.

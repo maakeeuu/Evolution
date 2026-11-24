@@ -71,3 +71,11 @@ Camera view, player control model, creature type, water/weather details, generat
 - Begin with a serial, tapered rule-generated chain, not an animal or a general graph framework. Data and activation commands are separate from Unity bodies and control. Branching and continuous anatomical growth are future work, not simulated by a seed or rebuild.
 - Muscles are antagonistic pull-only spring/damper paths across hinges. Activation shortens preferred length; bounded equal/opposite endpoint forces must use AddForceAtPosition, not root velocity or transform animation. No motorized joint or scripted trajectory is a substitute.
 - Unity native physics is not promised bitwise deterministic across platforms. Core generation and actuator math are reproducible; repeatability of native trajectories requires actual target-Editor measurements.
+
+
+## EV-CP2 initial Unity integration contract — 2026-11-24
+
+- Distinct physical siblings per segment, data parent indices, HingeJoint2D endpoint constraints and pairwise neighbor collision suppression. Keep non-neighbor self-contact. No joint motor, root motor, Rigidbody velocity commands or post-initialization Transform motion.
+- Separate organism physics/actuator owner, optional wave command driver, optional render view and scene bootstrap. Read actual angular/body/contact state as the future sensing seam; do not introduce empty AI abstractions.
+- First envelope is the opaque geometric union of overlapping convex patches with exact per-patch mesh/collider correspondence and interpolation inherited from the same body. It is a deliberately incomplete shell milestone, not a smooth global skin. Growth/topology adaptation is not implemented or faked by rebuilding.
+- Reuse the single user-validated Built-in shader resource from EV-CP1 without changing any EV-CP1 file. New runtime resources are owned/released, and no packages, global physics settings or hand-authored metadata are required.

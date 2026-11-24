@@ -25,7 +25,7 @@ class IntegrationTests(unittest.TestCase):
         definitions = [json.loads(p.read_text()) for p in ASSETS.rglob('*.asmdef')]
         names = [d['name'] for d in definitions]
         self.assertEqual(len(names), len(set(names)))
-        self.assertEqual(set(names), {'Evolution.Source.Core', 'Evolution.Source.Unity'})
+        self.assertEqual(set(names), {'Evolution.Source.Core', 'Evolution.Source.Unity', 'Evolution.Articulated.Core', 'Evolution.Articulated.Unity'})
         core = next(d for d in definitions if d['name'] == 'Evolution.Source.Core')
         runtime = next(d for d in definitions if d['name'] == 'Evolution.Source.Unity')
         self.assertTrue(core['noEngineReferences'])

@@ -4,7 +4,7 @@
 
 **Milestone specification:** [EV_CP2_SPEC.md](EV_CP2_SPEC.md)  
 **Agent handoff:** [HANDOFF_EV_CP2.md](HANDOFF_EV_CP2.md)  
-**Implementation status:** EV-CP2 checkpoint 1 implemented in Core; Unity integration follows separately.  
+**Implementation status:** first physical slice implemented and mirrored in EVCP2; native Unity validation pending.  
 **Previous milestone:** EV-CP1 technical radial-form fixture, integrated under Assets/Evolution/EVCP1/.
 
 ### EV-CP2 target
@@ -199,3 +199,18 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Added force-capped pull-only spring/damper muscles with activation-dependent rest length and dt-based activation dynamics. No learned control or adaptation is implied. Added a convex float-compatible segment envelope intended to share coordinates between mesh and collider.
 - Added actual-C# standalone tests for topology, attachment coincidence, repeatability, contour winding/indices/area, muscle tension/torque/momentum, activation rate invariance and invalid inputs. Included CP2 Core in netstandard2.1/C#9 compatibility and added a blocking CI execution step.
 - Local C# toolchain is unavailable; this checkpoint's actual C# result must be read from its own CI, not inferred. Unity APIs, solver, locomotion and rendering have NOT been tested. No Unity runtime integration in checkpoint 1.
+
+
+## EV-CP2 checkpoint 2 — physical chain and force-driven demonstration, 2026-11-24
+
+- Verified checkpoint 1 a7507eead5e0a8c3b166c625ac251931882cee81: run 45434470704 has four completed/success jobs for exactly that head_sha. Current passed actual CP2 C# mechanics, CP1 regressions, C#9/netstandard2.1 compatibility, Roslyn and Python.
+- Added Unity physical builder: separate dynamic bodies, exact shared float segment contours, connected HingeJoint2D anchors/limits, no joint motors, equal/opposite point forces from antagonistic muscles in FixedUpdate, point-velocity damping and bounded activation/tension. Native motion has not been observed remotely.
+- Added separate open-loop wave excitation (explicitly not learning), render diagnostics for bones/joints/muscles and first opaque overlapping-patch envelope copying collider coordinates. This is not the final smooth global manifold shell.
+- Added opt-in ArticulatedDemo2D with one natural soil profile and gravity-loaded chain; no artificial traps, velocity/root transform propulsion, biome/AI/generations or new packages/settings. Owned partial objects/resources fail closed and are released; topology edits/removal are not anatomical development.
+- Canonical Evolution_Source/Articulated mirrors into Assets/Evolution/EVCP2 under distinct assemblies. All EV-CP1 runtime files preserved; shared Built-in Resources shader reused without a duplicate key. No scene GUID/meta fabricated.
+- Added eight Python reference/contract groups and four pending Unity PlayMode cases outside Assets; Roslyn now parses canonical CP2 adapters and pending tests as well as actual Assets. Expanded assembly registry, retained exact CP1 mirror and all existing tests/matrix gates.
+- README and docs/EV_CP2_VALIDATION.md contain local setup, passive/active/antagonist/COM/contact/limits/shell/lifecycle checks and explicit remaining gaps. Full smooth skin, continuous anatomical change and learned locomotion remain unimplemented.
+- Actual Unity API/shader compilation, Play Mode, native forces/contacts, rendering and the four new PlayMode cases have NOT been performed. This commit's CI must be verified on its own SHA.
+
+- Pre-publication review checked target-version HingeJoint2D/point-force APIs against Unity 6000.6 reference. Corrected local-to-world attachment conversion to GetRelativePoint (GetPoint is world-to-local) and added a source regression contract. Cached the view property block rather than allocating one per muscle/frame. Rounded Inspector float bounds on conversion to strict double Core settings; no runtime anatomy rebuild.
+- Executed locally before publication: 35/35 Python reference/structural groups passed; assembly JSON, csproj XML and workflow YAML parsed. New Core executed successfully in checkpoint 1 CI; checkpoint 2 expanded syntax/integration checks still require exact-HEAD CI.

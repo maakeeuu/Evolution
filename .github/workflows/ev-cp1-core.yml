@@ -8,6 +8,7 @@ on:
       - 'docs/PROGRESS.md'
       - 'docs/DECISIONS.md'
       - 'docs/UNITY_VALIDATION.md'
+      - 'docs/EV_CP2_VALIDATION.md'
       - 'README.md'
       - 'Assets/**'
       - 'Packages/**'
@@ -19,6 +20,7 @@ on:
       - 'docs/PROGRESS.md'
       - 'docs/DECISIONS.md'
       - 'docs/UNITY_VALIDATION.md'
+      - 'docs/EV_CP2_VALIDATION.md'
       - 'README.md'
       - 'Assets/**'
       - 'Packages/**'
@@ -81,7 +83,10 @@ jobs:
       - name: Execute articulated organism mechanics
         if: matrix.revision == 'current'
         shell: bash
-        run: python3 Tests/run_checked.py dotnet run --project Tests/Articulated/Evolution.Articulated.Tests.csproj --configuration Release
+        run: |
+          set -euo pipefail
+          python3 Tests/run_checked.py dotnet run --project Tests/Articulated/Evolution.Articulated.Tests.csproj --configuration Release | tee "$RUNNER_TEMP/articulated-tests.log"
+          echo "::notice title=EV-CP2 assertions::$(grep '^PASS:' "$RUNNER_TEMP/articulated-tests.log")"
       - name: Parse actual adapters and Unity tests with CSharp 9 Roslyn
         if: matrix.revision == 'current'
         shell: bash
@@ -99,6 +104,7 @@ jobs:
           path: |
             ${{ runner.temp }}/sdk-version.log
             ${{ runner.temp }}/core-tests.log
+            ${{ runner.temp }}/articulated-tests.log
             ${{ runner.temp }}/adapter-syntax.log
           if-no-files-found: ignore
           retention-days: 14

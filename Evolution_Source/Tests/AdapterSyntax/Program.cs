@@ -11,7 +11,7 @@ internal static class Program
     {
         if (args.Length != 1) throw new ArgumentException("Pass the Evolution_Source directory.");
         string root = Path.GetFullPath(args[0]);
-        string[] directories = { Path.Combine(root,"Code","Unity"), Path.Combine(root,"Tests","Unity"), Path.Combine(Directory.GetParent(root).FullName,"Assets") };
+        string[] directories = { Path.Combine(root,"Code","Unity"), Path.Combine(root,"Articulated","Unity"), Path.Combine(root,"Tests","Unity"), Path.Combine(root,"Tests","ArticulatedUnity"), Path.Combine(Directory.GetParent(root).FullName,"Assets") };
         string[] callbacks = { "Awake", "Start", "Update", "FixedUpdate", "OnEnable", "OnDisable", "OnDestroy", "OnValidate" };
         int files=0, behaviours=0, contracts=0;
         foreach (string directory in directories)
