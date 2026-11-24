@@ -239,3 +239,11 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Added actual standalone mode/ownership/release/external-writer regressions and prepared (NOT RUN) native modes, physical pause/resume, teardown, external writer and 60-game-second 20x surface tests. Expanded native tests do not constitute Editor compilation or execution.
 
 - Before publishing C: 39/39 local Python reference/structural groups pass; asmdef JSON, csproj XML and workflow YAML parse. Checkpoint B 4ba0634a2bb40293700e6793845e3cb96217fbfd has successful exact-HEAD CI run 45442151590. C's expanded actual C#/Roslyn checks still require its own publication/CI; no Unity tests or real scenes were executed/generated.
+
+## Verified standalone gates for articulation/workflow checkpoints — 2026-11-24
+
+- A: 73323dd5be05184d534e6c91d5fa1badc9f5e73d, exact-HEAD run 45441537729 completed/success.
+- B: 4ba0634a2bb40293700e6793845e3cb96217fbfd, exact-HEAD run 45442151590 completed/success.
+- C: c522acc176bfb4c9f5103469774d83343b3bb2d6, exact-HEAD run 45443300953 completed/success; current job 138620103212 passed compatibility, actual C# execution, Roslyn and Python. CI annotations explicitly report 29,205 CP2 C# assertions and 1,226,597 CP1 Core assertions. Local Python 39/39 and JSON/XML/YAML checks pass.
+- Re-read published Assets/Evolution tree after C: EVCP1 remains 379cde3c17ac8dafcd0e5d9a6f12edfd46f33f13; legacy Scripts remains f0949f2077599a7a01733f10556f0a3f6a25f5ac. Engine/ProjectSettings and legacy Editor builder unchanged; only required IMGUI built-in module added.
+- Nine PlayMode cases are prepared, NOT RUN. No actual .unity/.meta generation, target-Editor API/shader compilation, native joint/COM/contact acceptance or 20x stability/performance verification happened remotely. Nominal load-budget regression is confirmed; the user's complete native failure cause is not conclusively diagnosed. Native isolated PASS is still the next blocking acceptance step, before surface/time validation. EV-CP2 is not complete.
