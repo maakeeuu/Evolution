@@ -112,3 +112,9 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Expanded pending PlayMode suite from three to five tests with obstacle native resource teardown and late Rigidbody wake-up. These are NOT executed or compiled against Unity.
 - Locally reran 21 independent Python reference/structural checks and parsed project/assembly/workflow files. Results of the new C# allocation/syntax probes must be verified in this exact commit's CI, not inferred from checkpoint 1.
 - Source is prepared for a controlled future integration gate, not accepted as a Unity-validated build. Remaining checks: actual Unity C#/shader import, resource/failure lifecycle, native Mesh/Collider equality, sleeping/resizing contacts, CCD and visual smoothness. No new game systems or Unity integration were performed.
+
+## Integration Readiness CI feedback — 2026-11-24
+
+- Checkpoint 2 ba721ebf4e4145e9e1b45e9d5929833a05ad2610 was published and its own run 45415906977 checked. The current job compiled netstandard2.1, then failed during actual core regression execution (exit 134); syntax/Python steps were correctly skipped. It was NOT reported as passing.
+- The new exact-endpoint probe exposed a real rounding issue to address: from + (target-from)*1 need not equal target bit-for-bit (independent reproduction: .58+(.15-.58) != .15). Saturated/zero interpolation now returns the validated target/from directly, without arithmetic cancellation. Assertions remain unchanged.
+- Core runner now reports caught regression exceptions as CI error annotations and exits nonzero, so failures remain blocking and have inspectable messages rather than only an abort code. Exact new HEAD CI must verify whether any further failure remains.

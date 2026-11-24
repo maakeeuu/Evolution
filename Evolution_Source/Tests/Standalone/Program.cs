@@ -15,7 +15,19 @@ internal static class Program
         try { action(); } catch (ArgumentOutOfRangeException) { rejected = true; }
         Check(rejected, "Invalid input accepted");
     }
-    public static void Main()
+    public static int Main()
+    {
+        try { Run(); return 0; }
+        catch (Exception error)
+        {
+            Console.Error.WriteLine(error);
+            string message=error.Message.Replace("%","%25").Replace("\r","%0D").Replace("\n","%0A");
+            Console.WriteLine("::error title=Core regression failure::"+message);
+            return 1;
+        }
+    }
+
+    private static void Run()
     {
         var random = new Random(20261124);
         foreach (int n in new[] {24, 32, 64, 128})

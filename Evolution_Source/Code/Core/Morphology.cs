@@ -35,6 +35,8 @@ namespace Evolution.Source.Core
             double a = decay < 1e-5
                 ? decay * (1 - decay * .5 + decay * decay / 6)
                 : 1.0 - Math.Exp(-decay);
+            if (a == 0) return from;
+            if (a == 1) return target;
             return new Morphology(
                 from.Width + (target.Width - from.Width) * a,
                 from.Height + (target.Height - from.Height) * a,
