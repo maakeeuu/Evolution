@@ -52,6 +52,7 @@ namespace Evolution.Creatures
         private LineRenderer _lineRenderer;
         private Mesh _mesh;
         private Material _material;
+        private Material _outlineMaterial;
         private Vector3[] _vertices;
         private Vector2[] _contour;
         private int[] _triangles;
@@ -149,7 +150,12 @@ namespace Evolution.Creatures
                     _material = new Material(shader) { name = "Evolution Creature Runtime Material" };
                     _material.hideFlags = HideFlags.DontSave;
                     _meshRenderer.sharedMaterial = _material;
-                    _lineRenderer.sharedMaterial = _material;
+                }
+                if (shader != null)
+                {
+                    _outlineMaterial = new Material(shader) { name = "Evolution Creature Outline Material" };
+                    _outlineMaterial.hideFlags = HideFlags.DontSave;
+                    _lineRenderer.sharedMaterial = _outlineMaterial;
                 }
             }
 
@@ -231,6 +237,8 @@ namespace Evolution.Creatures
 
             if (_material != null)
                 _material.color = bodyColor;
+            if (_outlineMaterial != null)
+                _outlineMaterial.color = Color.white;
         }
 
         private static Morphology Clamp(Morphology value)
@@ -257,6 +265,7 @@ namespace Evolution.Creatures
         {
             if (_mesh != null) DestroyGeneratedObject(_mesh);
             if (_material != null) DestroyGeneratedObject(_material);
+            if (_outlineMaterial != null) DestroyGeneratedObject(_outlineMaterial);
         }
 
         private static void DestroyGeneratedObject(Object obj)
