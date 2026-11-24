@@ -28,5 +28,8 @@
 - Keep PolygonCollider2D synchronized with the rendered contour.
 - Create and run the minimal 2D scene in the target Unity Editor.
 
+## Handoff
+The first implementation handoff is recorded in [HANDOFF_EV_CP1.md](HANDOFF_EV_CP1.md). It accurately records what is implemented, what was statically checked, and what still requires Unity Editor validation.
+
 ## Next
 Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create Morphology Demo**, press Play, and inspect the body, outline, collider and Console. Fix any import/runtime issues before adding movement or AI.
