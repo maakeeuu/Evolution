@@ -1,0 +1,9 @@
+{
+  "name": "Evolution.Source.PlayModeTests",
+  "references": ["Evolution.Source.Core", "Evolution.Source.Unity", "UnityEngine.TestRunner"],
+  "includePlatforms": [],
+  "overrideReferences": true,
+  "precompiledReferences": ["nunit.framework.dll"],
+  "autoReferenced": false,
+  "defineConstraints": ["UNITY_INCLUDE_TESTS"]
+}

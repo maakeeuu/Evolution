@@ -33,6 +33,12 @@ class SourceTests(unittest.TestCase):
         self.assertNotIn('private void Update(',text)
         self.assertNotIn('[ExecuteAlways]',text)
         self.assertNotIn('LineRenderer',text)
+        self.assertIn('RadialGeometry.FillFloatCompatible(shape, contour)',text)
+        self.assertIn('if (!changed)',text)
+        self.assertIn('if (physicsBody != null) physicsBody.WakeUp();',text)
+        publish=body(text,'Publish') if 'private void Publish(' in text else ''
+        self.assertLess(publish.index('if (!changed)'),publish.index('polygon.SetPath'))
+        self.assertLess(publish.index('ContourValidator.IsValidFan'),publish.index('mesh.vertices'))
 
     def test_validation_does_not_rebuild_or_reset(self):
         validation=body(source('CreatureBody2D.cs'),'OnValidate')
@@ -48,6 +54,16 @@ class SourceTests(unittest.TestCase):
         self.assertIn('Cull Off',shader)
         self.assertIn('_Color',shader)
         self.assertIn('Resources.Load<Shader>("EvolutionVector2D")',source('CreatureBody2D.cs'))
+
+    def test_optional_unity_suite_is_separate(self):
+        asm=json.loads((ROOT/'Tests/Unity/PlayMode/Evolution.Source.PlayModeTests.asmdef').read_text())
+        self.assertIn('UNITY_INCLUDE_TESTS',asm['defineConstraints'])
+        self.assertIn('Evolution.Source.Unity',asm['references'])
+        tests=(ROOT/'Tests/Unity/PlayMode/CreatureIntegrationTests.cs').read_text()
+        self.assertEqual(tests.count('[UnityTest]'),3)
+        project=(ROOT/'Tests/Standalone/Evolution.Core.Tests.csproj').read_text()
+        self.assertNotIn('Tests/Unity',project)
+        self.assertNotIn('UnityEngine',project)
 
     def test_delimiters_smoke_check(self):
         # Strip comments and strings before simple delimiter checking. Not a parser.

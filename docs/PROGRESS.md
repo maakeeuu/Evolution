@@ -5,6 +5,7 @@
 **Repository bootstrap:** committed.  
 **Procedural creature code:** committed.  
 **Unity Editor validation:** pending.  
+**Standalone C# validation:** passed in GitHub Actions (hardening runs #1 and #2; see below).  
 **Learning AI:** not implemented.  
 **Environment simulation:** not implemented.  
 **Unity version:** 6000.6.10f1.
@@ -15,7 +16,7 @@
 - `MASTER_PROMPT_RU.md`, `AGENTS.md`, `CLAUDE.md`, project version, package manifest and short build docs.
 - Impeccable pinned as a Git submodule.
 
-## Checks performed
+## Checks performed (original bootstrap; superseded by source/CI checkpoints below)
 - GitHub tree and committed file contents verified.
 - C# source braces balanced; key geometry/collider paths present.
 - Independent Python check of the contour formula: 32 combinations of the allowed extreme morphology parameters and resolutions 24/32/64/128 had positive polygon area and no proper intersections between non-adjacent edges.
@@ -81,3 +82,13 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Added a C# 9 / .NET Standard 2.1 compile target matching the intended Unity core API surface. It does not reference or compile UnityEngine. CI now builds it for current revisions.
 - Local independent Python suite: 19 tests passed. Independent worst analytic radial-area error across all extreme shapes/resolutions was about 1.35%, below the 4% regression bound. New C# regression and compatibility results are pending this commit's CI.
 - Next: consume and validate float geometry in Unity adapter, avoid unchanged collider republishing, wake changing bodies, and prepare opt-in Unity contact/equality tests without running/importing Unity.
+
+## EV-CP1 hardening checkpoint 3 — 2026-11-24
+
+- Confirmed hardening run #2 https://github.com/maakeeuu/Evolution/actions/runs/45412090992 completed successfully. The current C# core regression suite and C# 9 / .NET Standard 2.1 build passed, alongside historical matrix checks and Python references.
+- CreatureBody2D now consumes/validates the float-compatible contour before native publication; the exact same float coordinates drive mesh and polygon. Validation cannot be disabled. Identical geometry no longer triggers Mesh/SetPath publication; changed geometry wakes a cached Rigidbody2D. GeometryRevision exposes actual publication count.
+- Removing the body component now disables its owned collider, avoiding a remaining invisible solid after mesh cleanup.
+- Added three opt-in PlayMode integration tests under Evolution_Source/Tests/Unity: exact native Mesh/PolygonCollider coordinates during morphing, unchanged-publication/re-enable behavior, and moving/morphing obstacle contact plus braking. These tests have NOT been compiled/imported/run in Unity and are excluded from standalone CI.
+- Updated integration/test instructions. No Unity scene/project assembly or package changes, no Editor invocation, no learning systems.
+- Executed locally: 20 Python reference/structural groups passed. This commit's CI result is recorded separately when available; earlier core results do not validate Unity adapter changes.
+- Remaining gate: actual Unity 6000.6.10f1 C#/shader import and the pending PlayMode/contact/rendering checks, only after explicit integration approval. In particular, shape-growth depenetration, impulses and visible smoothness are still unverified.

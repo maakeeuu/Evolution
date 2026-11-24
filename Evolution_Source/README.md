@@ -32,8 +32,10 @@ With a .NET 8 SDK, run the actual core tests:
 dotnet run --project Evolution_Source/Tests/Standalone/Evolution.Core.Tests.csproj
 ```
 
-Only the Python checks were executed in the current development environment.
-C# compiler, Unity import, shader compilation, rendering and physics remain unverified.
+GitHub Actions now compiles and executes the actual C# core for all three historical
+checkpoints and the current source. It also builds current core against .NET Standard
+2.1 / C# 9. Runs and limitations are recorded in docs/PROGRESS.md and Tests/CI.md.
+Unity adapters, shader compilation, rendering and native physics remain unverified.
 
 Do not integrate into Unity yet. When explicitly authorized later, import Code and Art
 into the existing 6000.6.10f1 project, not Tests/Standalone. The source namespace differs
@@ -44,3 +46,15 @@ The optional EvolutionPrototype2D component creates its demo objects only during
 and only when manually attached to an object. Default intent pushes right into the
 single obstacle; it is a contact fixture, not autonomous intelligence. Gravity-free XY
 movement is a reversible test choice, not a final camera/control design.
+
+## Hardening and optional future Unity tests
+
+The adapter validates float-quantized points before publication, skips unchanged mesh/
+collider data and wakes an attached Rigidbody2D when geometry changes. GeometryRevision
+counts actual publications and is available for diagnostics/tests, not gameplay logic.
+
+Tests/Unity/PlayMode contains three opt-in future integration tests: exact mesh/collider
+coordinates through morphing, unchanged-publication/lifecycle behavior, and moving/
+morphing contact with a tall obstacle. They have NOT run or compiled against Unity.
+Import them only after integration is authorized and the target project's Unity Test
+Framework is available. Do not add packages or copy all Tests into Assets automatically.

@@ -20,7 +20,6 @@ namespace Evolution.Source.Unity
         [SerializeField, Range(-0.16f, 0.16f)] private float initialDorsalBias = 0.045f;
         [SerializeField, Range(-0.14f, 0.14f)] private float initialLateralLobes = 0.025f;
         [SerializeField, Range(0.01f, 2f)] private float response = 0.8f;
-        [SerializeField] private bool validateGeometry = true;
         [SerializeField] private Material vectorMaterial;
         // Temporary prototype color, not a final palette.
         [SerializeField] private Color bodyColor = new Color(0.20f, 0.47f, 0.43f, 1f);
@@ -28,6 +27,7 @@ namespace Evolution.Source.Unity
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
         private PolygonCollider2D polygon;
+        private Rigidbody2D physicsBody;
         private Mesh mesh;
         private Material ownedMaterial;
         private MaterialPropertyBlock properties;
@@ -41,6 +41,9 @@ namespace Evolution.Source.Unity
         private static readonly int ColorId = Shader.PropertyToID("_Color");
 
         public Morphology CurrentMorphology => current;
+        public uint GeometryRevision { get; private set; }
+
+        private void Start() => physicsBody = GetComponent<Rigidbody2D>();
 
         private void Awake()
         {
@@ -84,8 +87,16 @@ namespace Evolution.Source.Unity
 
         private void Publish(Morphology shape, bool first)
         {
-            RadialGeometry.Fill(shape, contour);
-            if (validateGeometry && !ContourValidator.IsValidFan(contour))
+            RadialGeometry.FillFloatCompatible(shape, contour);
+            bool changed = first;
+            for (int i = 0; i < contour.Length && !changed; i++)
+                changed = contour[i].X != physicsContour[i].x || contour[i].Y != physicsContour[i].y;
+            if (!changed)
+            {
+                ApplyColor();
+                return;
+            }
+            if (!ContourValidator.IsValidFan(contour))
             {
                 enabled = false;
                 throw new InvalidOperationException("Invalid creature contour; previous geometry retained.");
@@ -101,6 +112,13 @@ namespace Evolution.Source.Unity
             if (first) mesh.triangles = RadialGeometry.CreateFan(contour.Length);
             mesh.RecalculateBounds();
             polygon.SetPath(0, physicsContour);
+            GeometryRevision++;
+            if (physicsBody != null) physicsBody.WakeUp();
+            ApplyColor();
+        }
+
+        private void ApplyColor()
+        {
             meshRenderer.GetPropertyBlock(properties);
             properties.SetColor(ColorId, bodyColor);
             meshRenderer.SetPropertyBlock(properties);
@@ -143,6 +161,7 @@ namespace Evolution.Source.Unity
         private void OnDestroy()
         {
             if (meshFilter != null && meshFilter.sharedMesh == mesh) meshFilter.sharedMesh = null;
+            if (polygon != null) polygon.enabled = false;
             if (mesh != null) Destroy(mesh);
             if (ownedMaterial != null) Destroy(ownedMaterial);
         }

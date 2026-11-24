@@ -30,3 +30,17 @@ Acceptance checks after integration:
 Open risks: collider resizing may inject contact corrections, motor/contact interaction,
 fixed-step silhouette smoothness and shader/API compatibility must be assessed in Unity.
 These checks have not passed merely because the Python reference passes.
+
+## Optional executable PlayMode suite (not run)
+
+After explicit integration approval, and only if Unity Test Framework is available,
+import Tests/Unity/PlayMode separately with its asmdef. It is gated by
+UNITY_INCLUDE_TESTS; do not copy Tests/Standalone or Tests/Compatibility into Assets.
+Run CreatureIntegrationTests in PlayMode with the normal FixedUpdate physics mode.
+The tests cover 120 morph frames of exact Mesh/PolygonCollider equality, unchanged
+publication and re-enable behavior, and 200 moving/morphing contact steps plus braking.
+They do not replace manual 30/60/144 FPS or 120-second visual/contact inspection.
+
+Shape-growth depenetration and any resulting contact impulses remain a Unity risk.
+WakeUp and avoiding unnecessary SetPath calls reduce avoidable contact-state churn;
+they are not a claim that resizing contacts or CCD have been validated.
