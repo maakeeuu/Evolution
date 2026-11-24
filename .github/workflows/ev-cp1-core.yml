@@ -1,0 +1,56 @@
+name: EV-CP1 core checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Evolution_Source/**'
+      - '.github/workflows/ev-cp1-core.yml'
+  pull_request:
+    paths:
+      - 'Evolution_Source/**'
+      - '.github/workflows/ev-cp1-core.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ev-cp1-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  core:
+    name: Core / ${{ matrix.revision }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        revision:
+          - a0edc8ce426908742b8901faddf4215418d900f3
+          - fb338ee968cd141602ad48a423594a86a638ef20
+          - 986c8ee371d008e47d1dcc7ca836358fa6537c43
+          - current
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.revision == 'current' && github.sha || matrix.revision }}
+          persist-credentials: false
+          submodules: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Compile and execute actual CSharp core
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet run --project Evolution_Source/Tests/Standalone/Evolution.Core.Tests.csproj --configuration Release | tee "$RUNNER_TEMP/core-tests.log"
+          echo "::notice title=CSharp assertions::$(grep '^PASS:' "$RUNNER_TEMP/core-tests.log")"
+      - name: Independent Python references and wiring checks
+        shell: bash
+        run: python3 -m unittest discover -s Evolution_Source/Tests -p 'verify_*.py' -v
+      - name: Preserve compiler and test output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-output-${{ matrix.revision }}
+          path: ${{ runner.temp }}/core-tests.log
+          if-no-files-found: ignore
+          retention-days: 14

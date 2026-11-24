@@ -65,3 +65,10 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Updated source README and pending Unity checklist; recorded temporary decisions. All game code/resources/tests remain under Evolution_Source. Assets/Packages/ProjectSettings, Unity version, package manifest and other repositories are unchanged.
 - EV-CP1 is NOT accepted as Unity-validated. Learning within a lifetime, long-term adaptation policy and intergenerational evolution remain separate, unimplemented systems.
 - Next concrete gate: execute the actual C# console suite with a .NET 8 SDK; keep Unity contact/render validation pending until explicit integration authorization. Do not build or integrate Unity automatically.
+
+## EV-CP1 hardening checkpoint 1 — 2026-11-24
+
+- Added read-only GitHub Actions CI for actual .NET 8 compilation/core assertions and Python checks. The matrix includes all three historical source checkpoints and the current commit.
+- Only the required workflow entry point is outside Evolution_Source; game and test code stay inside it. No Unity Editor, build, package changes, secrets, automatic result commits or submodule checkout.
+- Local environment still has no C# compiler and external DNS is unavailable. CI execution/results are pending at this checkpoint; configuration is not reported as a pass.
+- Next: inspect CI results, extend adversarial C# geometry/motion tests and validate float-quantized geometry used by Unity adapters.
