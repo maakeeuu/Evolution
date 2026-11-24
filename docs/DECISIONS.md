@@ -16,3 +16,9 @@
 
 ## Open
 Camera view, player control model, creature type, water/weather details, generations/inheritance, death rules, long-term goal.
+
+## Source-only EV-CP1 choices — 2026-11-24
+- Active code lives in Evolution_Source until explicit Unity integration approval; root Unity folders remain untouched.
+- The contact fixture temporarily uses gravity-free XY motion and one rectangular obstacle. Camera/control model remains open; this does not commit the final game to a top-down design.
+- Use one fill silhouette (no outward outline) so visual boundary and PolygonCollider2D use the same coordinates. A small local unlit shader avoids new rendering packages.
+- MorphologyDemo2D is a demonstration driver only. Target interpolation is not an adaptation policy; motion intent is not learning; no generation/inheritance system is added in EV-CP1.

@@ -54,3 +54,14 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Executed: 5 additional Python structural checks (component attribute arity, shared float geometry/fixed-step wiring, OnValidate safety, assembly/shader wiring, delimiter smoke checks); all 5 geometry groups rerun and passed.
 - Not executed: C# or shader compilation, Unity import/physics/rendering. Shader targets the current dependency-free/built-in baseline; other render pipelines are not validated.
 - Next: add acceleration-limited Rigidbody2D movement, a single vector obstacle, and a manually opt-in runtime demo bootstrap under Evolution_Source only.
+
+## EV-CP1 source checkpoint 3 — 2026-11-24
+
+- Added independent `PlanarMotion` velocity math, acceleration-limited `CreatureMotor2D` with Rigidbody2D CCD/interpolation, optional legacy-keyboard adapter, one matching vector mesh/PolygonCollider2D obstacle, and opt-in `EvolutionPrototype2D` runtime fixture. No Editor scripts, scene assets or auto-integration.
+- Default fixture intent pushes into the single obstacle; this is a future contact test, not obstacle avoidance/learning. XY/no-gravity motion is temporary and reversible.
+- Added 6 Python motion/reference/wiring groups, 1,000 seeded acceleration cases and C# console assertions for velocity/invalid input.
+- Executed: complete Python suite, 16 test groups passed (geometry, transitions, velocity math, structural wiring). They do not execute C#, shaders or Unity collision response.
+- C# console suite is provided but NOT RUN: no C#/.NET compiler installed and external DNS is unavailable. Unity import/compilation, shader rendering, contact stability, collider-resizing effects and Play Mode tests remain UNVERIFIED.
+- Updated source README and pending Unity checklist; recorded temporary decisions. All game code/resources/tests remain under Evolution_Source. Assets/Packages/ProjectSettings, Unity version, package manifest and other repositories are unchanged.
+- EV-CP1 is NOT accepted as Unity-validated. Learning within a lifetime, long-term adaptation policy and intergenerational evolution remain separate, unimplemented systems.
+- Next concrete gate: execute the actual C# console suite with a .NET 8 SDK; keep Unity contact/render validation pending until explicit integration authorization. Do not build or integrate Unity automatically.

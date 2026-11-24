@@ -65,6 +65,23 @@ internal static class Program
         Reject(() => Morphology.Approach(start, target, double.NaN, 1));
         Reject(() => RadialGeometry.CreateFan(23));
         Reject(() => RadialGeometry.CreateFan(129));
+        Point2 velocity = PlanarMotion.ApproachVelocity(new Point2(0, 0), new Point2(1, 1), 2, 8, 1);
+        Check(Math.Abs(velocity.X*velocity.X + velocity.Y*velocity.Y - 4) < 1e-12, "Diagonal speed");
+        Point2 accelerated = PlanarMotion.ApproachVelocity(new Point2(0, 0), new Point2(1, 0), 2, 8, .02);
+        Check(Math.Abs(accelerated.X - .16) < 1e-12 && accelerated.Y == 0, "Acceleration bound");
+        Point2 stopped = PlanarMotion.ApproachVelocity(new Point2(2, 0), new Point2(0, 0), 2, 8, 1);
+        Check(stopped.X == 0 && stopped.Y == 0, "Braking");
+        foreach (int hz in new[] {30, 50, 60, 144})
+        {
+            velocity = new Point2(0, 0);
+            for (int i = 0; i < hz; i++) velocity = PlanarMotion.ApproachVelocity(velocity,
+                new Point2(1, 1), 2, 1, 1.0/hz);
+            Check(Math.Abs(velocity.X - 1/Math.Sqrt(2)) < 1e-12
+                && Math.Abs(velocity.Y - 1/Math.Sqrt(2)) < 1e-12, "Velocity timestep dependence");
+        }
+        Reject(() => PlanarMotion.ApproachVelocity(new Point2(0, 0), new Point2(double.NaN, 0), 2, 8, 1));
+        Reject(() => PlanarMotion.ApproachVelocity(new Point2(0, 0), new Point2(1, 0), -1, 8, 1));
+        Reject(() => PlanarMotion.ApproachVelocity(new Point2(0, 0), new Point2(1, 0), 2, 8, -1));
         Console.WriteLine("PASS: " + checks + " C# core assertions");
     }
 }
