@@ -32,6 +32,14 @@ namespace Evolution.Source.Core
             }
         }
 
+        // Validate this quantized contour, not a higher-precision proxy for Unity vertices.
+        public static void FillFloatCompatible(Morphology shape, Point2[] contour)
+        {
+            Fill(shape, contour);
+            for (int i = 0; i < contour.Length; i++)
+                contour[i] = new Point2((float)contour[i].X, (float)contour[i].Y);
+        }
+
         // Vertex 0 is origin; contour[i] corresponds to mesh vertex i + 1.
         public static int[] CreateFan(int resolution)
         {

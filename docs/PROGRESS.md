@@ -72,3 +72,12 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Only the required workflow entry point is outside Evolution_Source; game and test code stay inside it. No Unity Editor, build, package changes, secrets, automatic result commits or submodule checkout.
 - Local environment still has no C# compiler and external DNS is unavailable. CI execution/results are pending at this checkpoint; configuration is not reported as a pass.
 - Next: inspect CI results, extend adversarial C# geometry/motion tests and validate float-quantized geometry used by Unity adapters.
+
+## EV-CP1 hardening checkpoint 2 — 2026-11-24
+
+- Confirmed CI run https://github.com/maakeeuu/Evolution/actions/runs/45410854846 succeeded: all four matrix jobs passed actual C# compilation/execution and Python steps, including all three historical checkpoints. This validates standalone core, not Unity adapters or physics.
+- Fixed cancellation in tiny positive morphology steps; preserved zero-time/zero-acceleration velocity without unnecessary overflow arithmetic; rejected overflowing contour wedges.
+- Added float-compatible contour generation and extensive actual-C# regressions: all 105 supported resolutions, 32 extreme parameter combinations plus seeded shapes, winding/degeneracy/self-intersection/NaN/overflow rejection, fan-versus-polygon area, 2,000 changing-target frames and 10,000 motion cases.
+- Added a C# 9 / .NET Standard 2.1 compile target matching the intended Unity core API surface. It does not reference or compile UnityEngine. CI now builds it for current revisions.
+- Local independent Python suite: 19 tests passed. Independent worst analytic radial-area error across all extreme shapes/resolutions was about 1.35%, below the 4% regression bound. New C# regression and compatibility results are pending this commit's CI.
+- Next: consume and validate float geometry in Unity adapter, avoid unchanged collider republishing, wake changing bodies, and prepare opt-in Unity contact/equality tests without running/importing Unity.

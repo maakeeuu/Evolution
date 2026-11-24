@@ -15,6 +15,7 @@ namespace Evolution.Source.Core
             if (!Morphology.Finite(acceleration) || acceleration < 0)
                 throw new ArgumentOutOfRangeException(nameof(acceleration));
             if (!Morphology.Finite(dt) || dt < 0) throw new ArgumentOutOfRangeException(nameof(dt));
+            if (dt == 0 || acceleration == 0) return current;
             double x = Math.Max(-1, Math.Min(1, intent.X));
             double y = Math.Max(-1, Math.Min(1, intent.Y));
             double length = Math.Sqrt(x * x + y * y);

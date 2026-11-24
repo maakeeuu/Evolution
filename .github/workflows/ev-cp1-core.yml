@@ -37,6 +37,10 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      - name: Compile Unity-compatible core API surface
+        if: matrix.revision == 'current'
+        shell: bash
+        run: dotnet build Evolution_Source/Tests/Compatibility/Evolution.Core.Compatibility.csproj --configuration Release
       - name: Compile and execute actual CSharp core
         shell: bash
         run: |

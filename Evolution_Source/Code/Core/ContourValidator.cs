@@ -13,7 +13,8 @@ namespace Evolution.Source.Core
             {
                 Point2 a = contour[i], b = contour[(i + 1) % contour.Length];
                 if (!Morphology.Finite(a.X) || !Morphology.Finite(a.Y)) return false;
-                if (a.X * b.Y - a.Y * b.X <= Epsilon) return false;
+                double wedge = a.X * b.Y - a.Y * b.X;
+                if (!Morphology.Finite(wedge) || wedge <= Epsilon) return false;
                 for (int j = i + 1; j < contour.Length; j++)
                 {
                     if (j == i + 1 || (i == 0 && j == contour.Length - 1)) continue;

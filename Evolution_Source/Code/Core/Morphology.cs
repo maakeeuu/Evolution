@@ -30,7 +30,11 @@ namespace Evolution.Source.Core
             if (!Finite(dt) || dt < 0) throw new ArgumentOutOfRangeException(nameof(dt));
             from = from.Validated();
             target = target.Validated();
-            double a = 1.0 - Math.Exp(-response * dt);
+            double decay = response * dt;
+            // Avoid cancellation of 1-exp(-x) for very small simulation steps.
+            double a = decay < 1e-5
+                ? decay * (1 - decay * .5 + decay * decay / 6)
+                : 1.0 - Math.Exp(-decay);
             return new Morphology(
                 from.Width + (target.Width - from.Width) * a,
                 from.Height + (target.Height - from.Height) * a,
