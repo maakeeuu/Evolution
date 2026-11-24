@@ -78,6 +78,10 @@ jobs:
           set -euo pipefail
           dotnet run --project Tests/Standalone/Evolution.Core.Tests.csproj --configuration Release | tee "$RUNNER_TEMP/core-tests.log"
           echo "::notice title=CSharp assertions::$(grep '^PASS:' "$RUNNER_TEMP/core-tests.log")"
+      - name: Execute articulated organism mechanics
+        if: matrix.revision == 'current'
+        shell: bash
+        run: python3 Tests/run_checked.py dotnet run --project Tests/Articulated/Evolution.Articulated.Tests.csproj --configuration Release
       - name: Parse actual adapters and Unity tests with CSharp 9 Roslyn
         if: matrix.revision == 'current'
         shell: bash

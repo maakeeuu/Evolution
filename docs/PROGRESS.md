@@ -4,7 +4,7 @@
 
 **Milestone specification:** [EV_CP2_SPEC.md](EV_CP2_SPEC.md)  
 **Agent handoff:** [HANDOFF_EV_CP2.md](HANDOFF_EV_CP2.md)  
-**Implementation status at kickoff:** not started by the documentation commit.  
+**Implementation status:** EV-CP2 checkpoint 1 implemented in Core; Unity integration follows separately.  
 **Previous milestone:** EV-CP1 technical radial-form fixture, integrated under Assets/Evolution/EVCP1/.
 
 ### EV-CP2 target
@@ -189,3 +189,13 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - During local Unity 6000.6.10f1 validation, the user confirmed that both runtime objects had assigned meshes/materials and were moving, but their fill geometry was not rendered normally in the Built-in Render Pipeline.
 - Replacing the shader pass tag `LightMode=SRPDefaultUnlit` with `LightMode=Always` in the local runtime shader made both the creature and obstacle render as filled shapes. This is direct user-observed Play Mode evidence for the Built-in pipeline fixture.
 - Synchronize the canonical `Evolution_Source/Art/Resources/EvolutionVector2D.shader` and integrated mirror `Assets/Evolution/EVCP1/Art/Resources/EvolutionVector2D.shader` to the tested tag. This fixes rendering only; it does not add skeletal anatomy, muscles, locomotion articulation, learning, or biological adaptation.
+
+
+## EV-CP2 checkpoint 1 — deterministic anatomy and muscle mechanics, 2026-11-24
+
+- Audited main 895bf8d6eb1d7152d74508d241e1361b0c1a1ea9 and its successful CI run 45431804330; read the full handoff/spec and all required project documents plus three relevant C#/physics/timestep skills.
+- EV-CP1 user-confirmed Built-in rendering fix is present in both shader copies. Preserve EV-CP1; reuse only Point2, finite guards, contour validator/fan topology and the existing vector resource. Radial morphology, its single-body motor and demo do NOT model articulated anatomy.
+- Added a deterministic 2..8 segment serial developmental rule with proportionate taper, parent topology, dimensions/masses/joint limits and two antagonistic attachment paths per hinge.
+- Added force-capped pull-only spring/damper muscles with activation-dependent rest length and dt-based activation dynamics. No learned control or adaptation is implied. Added a convex float-compatible segment envelope intended to share coordinates between mesh and collider.
+- Added actual-C# standalone tests for topology, attachment coincidence, repeatability, contour winding/indices/area, muscle tension/torque/momentum, activation rate invariance and invalid inputs. Included CP2 Core in netstandard2.1/C#9 compatibility and added a blocking CI execution step.
+- Local C# toolchain is unavailable; this checkpoint's actual C# result must be read from its own CI, not inferred. Unity APIs, solver, locomotion and rendering have NOT been tested. No Unity runtime integration in checkpoint 1.

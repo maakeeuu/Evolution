@@ -7,5 +7,5 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
-  <ItemGroup><Compile Include="../../Code/Core/*.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../../Code/Core/*.cs" /><Compile Include="../../Articulated/Core/*.cs" /></ItemGroup>
 </Project>

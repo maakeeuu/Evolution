@@ -63,3 +63,11 @@ Camera view, player control model, creature type, water/weather details, generat
 
 - In the target Unity 6000.6.10f1 Built-in Render Pipeline, the user locally observed that `LightMode=SRPDefaultUnlit` left the procedural mesh fill invisible while the selected-object outline remained visible.
 - Changing the pass tag to `LightMode=Always` made the creature fill and obstacle render in Play Mode. Treat this as a user-validated correction for the current Built-in baseline, not as evidence of SRP compatibility.
+
+
+## EV-CP2 first physical slice — 2026-11-24
+
+- Keep CP2 under Evolution_Source/Articulated with distinct Evolution.Articulated.Core/Unity assemblies and runtime mirror Assets/Evolution/EVCP2. Reuse CP1 pure geometry helpers and single shared Built-in Resources shader; preserve all CP1 runtime files.
+- Begin with a serial, tapered rule-generated chain, not an animal or a general graph framework. Data and activation commands are separate from Unity bodies and control. Branching and continuous anatomical growth are future work, not simulated by a seed or rebuild.
+- Muscles are antagonistic pull-only spring/damper paths across hinges. Activation shortens preferred length; bounded equal/opposite endpoint forces must use AddForceAtPosition, not root velocity or transform animation. No motorized joint or scripted trajectory is a substitute.
+- Unity native physics is not promised bitwise deterministic across platforms. Core generation and actuator math are reproducible; repeatability of native trajectories requires actual target-Editor measurements.
