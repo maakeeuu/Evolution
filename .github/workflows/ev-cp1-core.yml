@@ -87,6 +87,7 @@ jobs:
           set -euo pipefail
           python3 Tests/run_checked.py dotnet run --project Tests/Articulated/Evolution.Articulated.Tests.csproj --configuration Release | tee "$RUNNER_TEMP/articulated-tests.log"
           echo "::notice title=EV-CP2 assertions::$(grep '^PASS:' "$RUNNER_TEMP/articulated-tests.log")"
+          echo "::notice title=EV-CP3 assertions::$(grep '^EV-CP3:' "$RUNNER_TEMP/articulated-tests.log")"
       - name: Parse actual adapters and Unity tests with CSharp 9 Roslyn
         if: matrix.revision == 'current'
         shell: bash

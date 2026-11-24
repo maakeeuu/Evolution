@@ -2,6 +2,10 @@
 
 This directory retains the canonical source and standalone checks. User-authorized runtime mirrors are now integrated into Assets/Evolution/EVCP1; see ../docs/UNITY_VALIDATION.md. Unity validation is pending.
 
+## Active milestone: EV-CP3
+Articulated/Core/RodSkinGeometry.cs builds a continuous longitudinal strip; Articulated/Unity/ArticulatedRodSkin2D.cs follows real body/joint render poses without physical writes. Articulated is mirrored into Assets/Evolution/EVCP2. The safe EV-CP3 menu creates EVCP3_Rod.unity locally. See ../docs/EV_CP3_VALIDATION.md for modes, sampled discrepancy, tests and pending native acceptance. This is not exact historical restoration.
+
+
 ## Original source-only rules (historical phase; integration authorized 2026-11-24)
 
 - Put all newly created or modified game code and its supporting project files inside this directory.
@@ -37,7 +41,7 @@ checkpoints and the current source. It also builds current core against .NET Sta
 2.1 / C# 9. Runs and limitations are recorded in docs/PROGRESS.md and Tests/CI.md.
 Unity adapters, shader compilation, rendering and native physics remain unverified.
 
-Do not integrate into Unity yet. When explicitly authorized later, import Code and Art
+Historical pre-integration guidance (superseded by authorized mirrors): import Code and Art
 into the existing 6000.6.10f1 project, not Tests/Standalone. The source namespace differs
 from the legacy implementation. There are no serialized scene/prefab GUID references;
 new .meta files can be generated on that future first import.

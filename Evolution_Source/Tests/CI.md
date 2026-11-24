@@ -62,3 +62,7 @@ still performs syntax/contracts only, not Unity API compilation. The Python inte
 suite checks the exact runtime mirror, assembly separation, Resources key uniqueness,
 legacy preservation, engine version and required built-in Physics 2D module. CI triggers
 on Assets/Packages/ProjectSettings/README/manual-checklist changes as well.
+
+
+## EV-CP3 current gate
+See docs/EV_CP3_VALIDATION.md at repository root. Actual standalone rod geometry assertions run from Tests/Articulated with a dedicated CI annotation. Local references/structure do not execute Unity. Two CP3 PlayMode cases are prepared only (read-only native state, force-driven bend changes published Mesh); native acceptance and shell-only straight/bent capture remain pending. Existing nine CP2 native cases are not replaced or declared passed.

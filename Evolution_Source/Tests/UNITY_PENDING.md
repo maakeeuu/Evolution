@@ -57,3 +57,7 @@ IsInitialized=false, disabled render/collision and released partial resources. R
 must not create a half-initialized component or repeat exceptions every physics tick.
 Verify assigned external materials are not destroyed and previous property blocks and
 render slots are restored on teardown. These fault cases remain manual/pending Unity.
+
+
+## EV-CP3 current gate
+See docs/EV_CP3_VALIDATION.md at repository root. Actual standalone rod geometry assertions run from Tests/Articulated with a dedicated CI annotation. Local references/structure do not execute Unity. Two CP3 PlayMode cases are prepared only (read-only native state, force-driven bend changes published Mesh); native acceptance and shell-only straight/bent capture remain pending. Existing nine CP2 native cases are not replaced or declared passed.

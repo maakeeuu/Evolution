@@ -98,3 +98,10 @@ Camera view, player control model, creature type, water/weather details, generat
 - Exact historical approved rod could not be identified in published main; do not claim exact restoration or use the radial prototype as target.
 - Preserve all physical parameters. Establish the old capsule-patch renderer baseline before replacing it with anatomy-driven longitudinal skin.
 - Separate safe EVCP3_Rod scene path; four inspection modes, actual runtime anatomy report, explicit radial-conflict refusal. No Unity/scene/screenshot acceptance is implied.
+
+
+## EV-CP3 longitudinal skin — 2026-11-24
+- A single cross-section strip follows actual articulated segment/joint render poses; no body ellipse/fan or per-capsule body Mesh. Reuse buffers and topology. Width comes from unchanged anatomy, seam uses max neighboring radius and bounded bisector miter.
+- Never change physical dimensions/mass/actuator tuning to beautify the silhouette. Both directed sampled solid-coverage discrepancies remain measurable; do not describe them as exact surface equality or solver validation.
+- Unsupported anchor gaps, excessive turns and self-intersection invalidate only skin publication and are reported, not hidden through physical mutation or synthetic pose correction.
+- This is not exact historical restoration, and source/CI success does not complete EV-CP3. Native shell-only visual and physical-bending acceptance remain required.

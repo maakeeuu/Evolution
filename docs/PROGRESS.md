@@ -3,7 +3,7 @@
 ## Current milestone: EV-CP3 — longitudinal rod skin
 
 Specification: [EV_CP3_SPEC.md](EV_CP3_SPEC.md). Handoff: [HANDOFF_EV_CP3.md](HANDOFF_EV_CP3.md).
-Baseline prepared from bf1e333, separate safe scene path and four inspection modes; geometry replacement follows in a separate checkpoint. No Unity Editor available, no native acceptance or screenshot. Exact historical approved rod not found. [Validation](EV_CP3_VALIDATION.md).
+Baseline recorded before geometry changes in c6412a6; independent longitudinal skin and automatic checks implemented in the following checkpoint. Separate safe scene path and four inspection modes. No Unity Editor available, no native acceptance or screenshot. Exact historical approved rod not found. [Validation](EV_CP3_VALIDATION.md).
 
 ## Previous foundation: EV-CP2 — Articulated Organism
 
@@ -252,3 +252,12 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - C: c522acc176bfb4c9f5103469774d83343b3bb2d6, exact-HEAD run 45443300953 completed/success; current job 138620103212 passed compatibility, actual C# execution, Roslyn and Python. CI annotations explicitly report 29,205 CP2 C# assertions and 1,226,597 CP1 Core assertions. Local Python 39/39 and JSON/XML/YAML checks pass.
 - Re-read published Assets/Evolution tree after C: EVCP1 remains 379cde3c17ac8dafcd0e5d9a6f12edfd46f33f13; legacy Scripts remains f0949f2077599a7a01733f10556f0a3f6a25f5ac. Engine/ProjectSettings and legacy Editor builder unchanged; only required IMGUI built-in module added.
 - Nine PlayMode cases are prepared, NOT RUN. No actual .unity/.meta generation, target-Editor API/shader compilation, native joint/COM/contact acceptance or 20x stability/performance verification happened remotely. Nominal load-budget regression is confirmed; the user's complete native failure cause is not conclusively diagnosed. Native isolated PASS is still the next blocking acceptance step, before surface/time validation. EV-CP2 is not complete.
+
+
+## EV-CP3 longitudinal skin — implementation prepared, native acceptance pending
+- Started from main bf1e333; fully read required instructions/spec/handoff and previous audit. Historical exact approved rod is not identified, radial CP1 is not the target.
+- Baseline c6412a6a266a8e90b45793c652628733be7f9c68 / run 45450749392 completed/success. Separate EVCP3_Rod builder path, runtime identity/parameter report, radial conflict refusal, shell-only/collider/joint-muscle modes and explicit wave commands. Baseline source still had capsule patches, before their replacement.
+- Replaced body fill with reusable engine-independent RodSkinGeometry and read-only ArticulatedRodSkin2D: actual segment/joint endpoints, anatomical widths, bounded miters, short strip caps, connected triangles, float validation and self-intersection rejection. View is diagnostics only. No static pose overlay or root motion.
+- Native physics/anatomy source blobs, EV-CP1 full tree, packages and engine preserved. Sampled bidirectional skin/collider coverage is exposed in Inspector; mismatch is documented, not claimed zero. See EV_CP3_VALIDATION.md.
+- Local Python 46/46 pass; 91 independent geometry references; JSON/XML/YAML parsed. Actual C# additions cover 107 poses and require this checkpoint's CI; previous CI is not substituted.
+- Two CP3 PlayMode tests prepared but NOT compiled/imported/run in Unity. Existing nine CP2 cases still pending. No .unity/.meta/GUID or native screenshot fabricated. No Editor/Play Mode/physics/render/Build acceptance. EV-CP3 is not complete.

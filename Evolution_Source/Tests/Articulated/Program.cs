@@ -12,7 +12,7 @@ internal static class Program
     { bool rejected=false;try{action();}catch(ArgumentException){rejected=true;}Check(rejected,"invalid input accepted"); }
     public static int Main()
     {
-        try { Run();Console.WriteLine("PASS: "+assertions+" EV-CP2 C# assertions (no Unity physics).");return 0; }
+        try { Run();RodSkinTests.Run();Console.WriteLine("PASS: "+assertions+" EV-CP2 C# assertions (no Unity physics).");return 0; }
         catch(Exception e) { Console.Error.WriteLine(e);return 1; }
     }
     private static void Run()

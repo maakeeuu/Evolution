@@ -16,3 +16,7 @@ Implement tests for shell proportions, continuity, bending, determinism, and sep
 Do not claim native Unity validation unless it was actually run in Unity 6000.6.10f1. Preserve EV-CP1 and do not touch PEE. No force-push or history rewrite.
 
 Start with a concise audit report, then implement the correction. Do not stop at analysis unless a specific blocker prevents safe implementation. Report exact files, tests, commit SHA, CI, and pending Unity checks.
+
+
+## Current implementation boundary
+The forensic audit did NOT identify exact historical approved rod geometry. Do not restart that claim or use radial CP1 as target. Baseline was pinned before replacement in c6412a6; the current implementation uses independent longitudinal RodSkinGeometry / ArticulatedRodSkin2D. Read EV_CP3_VALIDATION.md and current PROGRESS.md for evidence and pending native gates. EV-CP3 is not accepted from CI alone.

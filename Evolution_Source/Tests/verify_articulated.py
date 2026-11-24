@@ -68,10 +68,11 @@ class ArticulatedChecks(unittest.TestCase):
             self.assertNotIn(forbidden,fixed)
         self.assertNotIn('.GetPoint(',fixed)
         self.assertLess(fixed.index('MuscleMechanics.Tension'),fixed.index('AddForceAtPosition'))
-    def test_render_copies_physical_polygon_and_shared_shader(self):
+    def test_diagnostics_copy_physical_polygon_and_shared_shader(self):
         s=(UNITY/'ArticulatedOrganismView2D.cs').read_text()
         self.assertIn('organism.GetCollider(i).GetPath(0)',s)
-        self.assertIn('vertices[j+1]=new Vector3(contour[j].x,contour[j].y,0)',s)
+        self.assertIn('colliderLines[i].SetPosition(j,new Vector3(contour[j].x,contour[j].y,-.03f))',s)
+        self.assertNotIn('Envelope patch',s)
         self.assertIn('Resources.Load<Shader>("EvolutionVector2D")',s)
         self.assertFalse(list(SOURCE.rglob('*.shader')))
         self.assertNotIn('new MaterialPropertyBlock();properties.SetColor',s)

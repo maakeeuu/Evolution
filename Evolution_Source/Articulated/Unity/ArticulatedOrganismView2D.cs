@@ -6,8 +6,7 @@ using UnityEngine;
 
 namespace Evolution.Articulated.Unity
 {
-    // First envelope: opaque union of overlapping convex segment patches, not a global manifold skin.
-    // Every patch copies its physical polygon exactly and inherits that body's interpolated transform.
+    // Diagnostics only; the independent longitudinal skin owns all body fill.
     [DisallowMultipleComponent]
     [RequireComponent(typeof(ArticulatedOrganism2D))]
     public sealed class ArticulatedOrganismView2D : MonoBehaviour
@@ -29,12 +28,14 @@ namespace Evolution.Articulated.Unity
         private Material material;
         private readonly List<GameObject> ownedObjects=new List<GameObject>();
         private readonly List<Mesh> meshes=new List<Mesh>();
-        private MeshRenderer[] shells,jointMarkers;
+        private MeshRenderer[] jointMarkers;
+        private ArticulatedRodSkin2D skin;
         private MaterialPropertyBlock properties;
         private LineRenderer[] bones,muscles,colliderLines;
         private bool built,failed;
         private void Awake()
-        { organism=GetComponent<ArticulatedOrganism2D>();properties=new MaterialPropertyBlock(); }
+        { organism=GetComponent<ArticulatedOrganism2D>();properties=new MaterialPropertyBlock();
+          skin=GetComponent<ArticulatedRodSkin2D>();if(skin==null) skin=gameObject.AddComponent<ArticulatedRodSkin2D>(); }
         private void LateUpdate()
         {
             if(failed) return;
@@ -43,10 +44,18 @@ namespace Evolution.Articulated.Unity
             try
             {
                 if(!built) Build();
-                for(int i=0;i<shells.Length;i++)
-                { shells[i].enabled=showShell && organism.enabled;bones[i].enabled=showSkeleton && organism.enabled; }
+                skin.Visible=showShell;
+                for(int i=0;i<bones.Length;i++) bones[i].enabled=showSkeleton && organism.enabled;
                 for(int i=0;i<jointMarkers.Length;i++) jointMarkers[i].enabled=showJoints && organism.enabled;
                 for(int i=0;i<colliderLines.Length;i++) colliderLines[i].enabled=showColliders && organism.enabled;
+                if(showColliders)
+                for(int i=0;i<colliderLines.Length;i++)
+                {
+                    var collider=organism.GetCollider(i);var path=collider.GetPath(0);
+                    colliderLines[i].positionCount=path.Length;
+                    for(int j=0;j<path.Length;j++)
+                    { Vector2 p=path[j]+collider.offset;colliderLines[i].SetPosition(j,new Vector3(p.x,p.y,-.03f)); }
+                }
                 for(int i=0;i<muscles.Length;i++)
                 {
                     MuscleSpec m=organism.GetMuscle(i);
@@ -62,7 +71,7 @@ namespace Evolution.Articulated.Unity
             }
             catch(Exception error)
             {
-                failed=true;Release();organism.enabled=false;enabled=false;Debug.LogException(error,this);
+                failed=true;Release();enabled=false;Debug.LogException(error,this);
             }
         }
         private void Build()
@@ -71,24 +80,16 @@ namespace Evolution.Articulated.Unity
             if(shader==null || !shader.isSupported) throw new InvalidOperationException("Supported EvolutionVector2D resource required.");
             material=new Material(shader) { name="EV-CP2 vector view",hideFlags=HideFlags.DontSave };
             if(!material.HasProperty("_Color")) throw new InvalidOperationException("Vector shader requires _Color.");
-            shells=new MeshRenderer[organism.BoneCount];bones=new LineRenderer[organism.BoneCount];
+            bones=new LineRenderer[organism.BoneCount];
             colliderLines=new LineRenderer[organism.BoneCount];
             for(int i=0;i<organism.BoneCount;i++)
             {
                 Transform bone=organism.GetBody(i).transform;
-                GameObject patch=CreateObject("Envelope patch "+i,bone);
                 Vector2[] contour=organism.GetCollider(i).GetPath(0);
                 colliderLines[i]=CreateLine("Collider outline "+i,bone,.009f,22,false);
                 colliderLines[i].positionCount=contour.Length;colliderLines[i].loop=true;
                 for(int j=0;j<contour.Length;j++) colliderLines[i].SetPosition(j,new Vector3(contour[j].x,contour[j].y,-.03f));
                 SetColor(colliderLines[i],new Color(.2f,.5f,.9f,1));
-                var vertices=new Vector3[contour.Length+1];
-                for(int j=0;j<contour.Length;j++) vertices[j+1]=new Vector3(contour[j].x,contour[j].y,0);
-                var mesh=new Mesh { name="EV-CP2 shared contour patch "+i,hideFlags=HideFlags.DontSave };
-                meshes.Add(mesh);mesh.vertices=vertices;mesh.triangles=RadialGeometry.CreateFan(contour.Length);mesh.RecalculateBounds();
-                patch.AddComponent<MeshFilter>().sharedMesh=mesh;
-                var renderer=patch.AddComponent<MeshRenderer>();shells[i]=renderer;
-                renderer.sharedMaterial=material;renderer.sortingOrder=10;SetColor(renderer,new Color(.23f,.48f,.4f,1));
                 bones[i]=CreateLine("Bone "+i,bone,.035f,20,false);
                 float length=(float)organism.Definition[i].Length;
                 bones[i].SetPosition(0,new Vector3(-length*.5f,0,-.01f));
