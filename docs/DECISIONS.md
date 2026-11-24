@@ -31,3 +31,5 @@ Camera view, player control model, creature type, water/weather details, generat
 
 - Independent adapter verification uses actual Roslyn C# 9 parsing with SDK-provided compiler assemblies, not Unity stubs. This is a syntax/contract gate only; Unity API binding and native behavior remain explicitly pending.
 - CI runs for progress/decisions-only checkpoints as well as source changes and verifies the checked-out SHA so the reported main HEAD always has its own run.
+
+- Pin standalone SDK resolution to .NET 8 inside Evolution_Source and assert it in CI. Installing an SDK alone does not select it when hosted runners include newer SDKs; SDK-provided Roslyn must match the standalone verifier runtime.

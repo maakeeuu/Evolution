@@ -24,6 +24,9 @@ jobs:
     name: Core / ${{ matrix.revision }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: Evolution_Source
     strategy:
       fail-fast: false
       matrix:
@@ -41,6 +44,15 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      - name: Select and verify .NET 8 SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f global.json ]; then
+            printf '%s\n' '{"sdk":{"version":"8.0.100","rollForward":"latestFeature","allowPrerelease":false}}' > global.json
+          fi
+          dotnet --version | tee "$RUNNER_TEMP/sdk-version.log"
+          [[ "$(dotnet --version)" == 8.0.* ]]
       - name: Verify exact checked out revision
         shell: bash
         env:
@@ -49,28 +61,29 @@ jobs:
       - name: Compile Unity-compatible core API surface
         if: matrix.revision == 'current'
         shell: bash
-        run: dotnet build Evolution_Source/Tests/Compatibility/Evolution.Core.Compatibility.csproj --configuration Release
+        run: dotnet build Tests/Compatibility/Evolution.Core.Compatibility.csproj --configuration Release
       - name: Compile and execute actual CSharp core
         shell: bash
         run: |
           set -euo pipefail
-          dotnet run --project Evolution_Source/Tests/Standalone/Evolution.Core.Tests.csproj --configuration Release | tee "$RUNNER_TEMP/core-tests.log"
+          dotnet run --project Tests/Standalone/Evolution.Core.Tests.csproj --configuration Release | tee "$RUNNER_TEMP/core-tests.log"
           echo "::notice title=CSharp assertions::$(grep '^PASS:' "$RUNNER_TEMP/core-tests.log")"
       - name: Parse actual adapters and Unity tests with CSharp 9 Roslyn
         if: matrix.revision == 'current'
         shell: bash
         run: |
           set -euo pipefail
-          python3 Evolution_Source/Tests/run_checked.py dotnet run --project Evolution_Source/Tests/AdapterSyntax/Evolution.AdapterSyntax.csproj --configuration Release -- Evolution_Source | tee "$RUNNER_TEMP/adapter-syntax.log"
+          python3 Tests/run_checked.py dotnet run --project Tests/AdapterSyntax/Evolution.AdapterSyntax.csproj --configuration Release -- . | tee "$RUNNER_TEMP/adapter-syntax.log"
       - name: Independent Python references and wiring checks
         shell: bash
-        run: python3 -m unittest discover -s Evolution_Source/Tests -p 'verify_*.py' -v
+        run: python3 -m unittest discover -s Tests -p 'verify_*.py' -v
       - name: Preserve compiler and test output
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: core-output-${{ matrix.revision }}
           path: |
+            ${{ runner.temp }}/sdk-version.log
             ${{ runner.temp }}/core-tests.log
             ${{ runner.temp }}/adapter-syntax.log
           if-no-files-found: ignore

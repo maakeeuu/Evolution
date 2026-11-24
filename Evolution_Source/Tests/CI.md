@@ -38,3 +38,18 @@ simulate resources/physics. No Unity mocks/stubs are used or claimed as validati
 
 The core allocation probe warms up reusable buffers then measures only the core math/
 validation hot path. A zero result is not a measurement of Unity APIs or the renderer.
+
+SDK selection is now enforced with Evolution_Source/global.json, not merely installed
+by setup-dotnet: hosted runners can also have a newer SDK that otherwise wins resolution.
+Run commands from Evolution_Source, e.g.:
+
+```sh
+cd Evolution_Source
+dotnet build Tests/Compatibility/Evolution.Core.Compatibility.csproj -c Release
+dotnet run --project Tests/Standalone/Evolution.Core.Tests.csproj -c Release
+dotnet run --project Tests/AdapterSyntax/Evolution.AdapterSyntax.csproj -c Release -- .
+```
+
+Historical checkout jobs receive the same ephemeral SDK policy because their old source
+has no global.json. Their original repository history is not modified. CI asserts 8.0.x
+before compilation and preserves the SDK version alongside the output logs.

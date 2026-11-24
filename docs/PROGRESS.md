@@ -120,3 +120,9 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Core runner now reports caught regression exceptions as CI error annotations and exits nonzero, so failures remain blocking and have inspectable messages rather than only an abort code. Exact new HEAD CI must verify whether any further failure remains.
 
 - Follow-up a3658889c5977c6dda3ad7bec366316c50504963 / run 45416270712: actual core execution now PASS (1,226,597 assertions, including zero managed bytes in the warmed core probe); netstandard2.1 builds successfully. Roslyn standalone step failed before Python. Compiler diagnostics are now preserved from stderr and exposed as CI annotations through run_checked.py; the failing gate remains enabled. No claim of a successful overall run yet.
+
+## Integration Readiness standalone SDK selection fix — 2026-11-24
+
+- Verified aafaeab6c52bae4bb9dc55f6b9427805d741542a and its run 45416756391. Core still passes 1,226,597 assertions. Captured Roslyn diagnostics identify the real failure: despite setup-dotnet installing 8.0.x, the hosted runner resolved SDK 11.0.100, whose compiler assemblies require newer framework assemblies than this net8.0 verifier.
+- Added Evolution_Source/global.json selecting stable .NET 8 (latest installed 8.0 feature band). All shell checks run from Evolution_Source; CI asserts the actual SDK is 8.0.x. Old revision jobs get an equivalent ephemeral policy in their checkout, not a rewritten commit.
+- This changes test tooling selection only, not Unity version, packages, gameplay or geometry. Roslyn checks and core allocation assertions remain blocking and unchanged. Re-run all jobs on the new HEAD to validate the correction.
