@@ -12,12 +12,14 @@ namespace Evolution.Source.Unity
         [SerializeField, Range(0.1f, 6f)] private float speed = 2f;
         [SerializeField, Range(0.1f, 30f)] private float acceleration = 8f;
         private Rigidbody2D body;
+        private CreatureBody2D shape;
         private Vector2 intent;
 
         private void Awake()
         {
             NormalizeSettings();
             body = GetComponent<Rigidbody2D>();
+            shape = GetComponent<CreatureBody2D>();
             body.bodyType = RigidbodyType2D.Dynamic;
             body.gravityScale = 0f;
             body.freezeRotation = true;
@@ -35,6 +37,12 @@ namespace Evolution.Source.Unity
 
         private void FixedUpdate()
         {
+            // Cross-component readiness is checked after every Awake has had a chance to run.
+            if (shape == null || !shape.IsInitialized)
+            {
+                enabled = false;
+                return;
+            }
             Point2 next = PlanarMotion.ApproachVelocity(
                 new Point2(body.linearVelocity.x, body.linearVelocity.y),
                 new Point2(intent.x, intent.y), speed, acceleration, Time.fixedDeltaTime);

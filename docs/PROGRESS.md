@@ -92,3 +92,13 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Updated integration/test instructions. No Unity scene/project assembly or package changes, no Editor invocation, no learning systems.
 - Executed locally: 20 Python reference/structural groups passed. This commit's CI result is recorded separately when available; earlier core results do not validate Unity adapter changes.
 - Remaining gate: actual Unity 6000.6.10f1 C#/shader import and the pending PlayMode/contact/rendering checks, only after explicit integration approval. In particular, shape-growth depenetration, impulses and visible smoothness are still unverified.
+
+## EV-CP1 Integration Readiness — checkpoint 1, 2026-11-24
+
+- Initial main HEAD was a64cf0bb89428593e6e8779e5d1d7312ce7e6b90; inspected its full patch and confirmed hardening checkpoint 3 publication. Queried run 45412773500 jobs: all four have exactly that head_sha and success; current also passed the C# 9 / netstandard2.1 build. Earlier runs were not used as evidence for that HEAD.
+- Fixed failure paths in body/obstacle Awake: render/collision stay disabled until initialization succeeds; partial owned resources are detached/released and one exception is reported. A failed component cannot be re-enabled into a half-initialized state.
+- Preserve previous mesh/material slots and property blocks when releasing owned resources; only generated Mesh/Material objects are destroyed. Supplied materials must expose _Color.
+- Fixed invisible collision left by deleting VectorObstacle2D, and discover a Rigidbody2D added after body Start on the next actual geometry publication.
+- Motor checks shape readiness in FixedUpdate (not across unordered Awakes); fixture removes partial objects if a body/obstacle initialization fails.
+- Body disable continues to freeze a valid shape rather than delete its collision; failure and destruction are distinct teardown paths.
+- Locally executed: 21 Python reference/structural tests. These lifecycle fixes are still static/structural evidence until real Unity tests run. This checkpoint's new CI must be checked before publishing the next checkpoint.

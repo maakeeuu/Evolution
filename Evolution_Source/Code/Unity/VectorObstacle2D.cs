@@ -15,40 +15,76 @@ namespace Evolution.Source.Unity
         private Mesh mesh;
         private Material ownedMaterial;
         private MeshFilter meshFilter;
+        private MeshRenderer meshRenderer;
+        private PolygonCollider2D polygon;
+        private Material assignedMaterial;
+        private Material previousMaterial;
+        private Mesh previousMesh;
+        private MaterialPropertyBlock previousProperties;
+        private bool failed;
+        public bool IsInitialized { get; private set; }
+
+        private void OnEnable()
+        {
+            if (failed) enabled = false;
+        }
 
         private void Awake()
         {
             NormalizeSize();
             meshFilter = GetComponent<MeshFilter>();
-            MeshRenderer renderer = GetComponent<MeshRenderer>();
-            var points = new[]
+            meshRenderer = GetComponent<MeshRenderer>();
+            polygon = GetComponent<PolygonCollider2D>();
+            previousMesh = meshFilter.sharedMesh;
+            previousMaterial = meshRenderer.sharedMaterial;
+            previousProperties = new MaterialPropertyBlock();
+            meshRenderer.GetPropertyBlock(previousProperties);
+            bool renderEnabled = meshRenderer.enabled, collisionEnabled = polygon.enabled;
+            meshRenderer.enabled = false;
+            polygon.enabled = false;
+            try
             {
-                new Vector2(-size.x/2, -size.y/2), new Vector2(size.x/2, -size.y/2),
-                new Vector2(size.x/2, size.y/2), new Vector2(-size.x/2, size.y/2)
-            };
-            var vertices = new Vector3[points.Length];
-            for (int i = 0; i < points.Length; i++)
-                vertices[i] = new Vector3(points[i].x, points[i].y, 0f);
-            mesh = new Mesh { name = "Evolution Source Obstacle", hideFlags = HideFlags.DontSave };
-            mesh.vertices = vertices;
-            mesh.triangles = new[] { 0, 1, 2, 0, 2, 3 };
-            mesh.RecalculateBounds();
-            meshFilter.sharedMesh = mesh;
-            if (vectorMaterial == null)
-            {
-                Shader shader = Resources.Load<Shader>("EvolutionVector2D");
-                if (shader == null) throw new InvalidOperationException("EvolutionVector2D shader missing.");
-                ownedMaterial = new Material(shader) { hideFlags = HideFlags.DontSave };
+                if (vectorMaterial != null && !vectorMaterial.HasProperty("_Color"))
+                    throw new InvalidOperationException("Vector material must expose _Color.");
+                var points = new[]
+                {
+                    new Vector2(-size.x/2, -size.y/2), new Vector2(size.x/2, -size.y/2),
+                    new Vector2(size.x/2, size.y/2), new Vector2(-size.x/2, size.y/2)
+                };
+                var vertices = new Vector3[points.Length];
+                for (int i = 0; i < points.Length; i++)
+                    vertices[i] = new Vector3(points[i].x, points[i].y, 0f);
+                mesh = new Mesh { name = "Evolution Source Obstacle", hideFlags = HideFlags.DontSave };
+                mesh.vertices = vertices;
+                mesh.triangles = new[] { 0, 1, 2, 0, 2, 3 };
+                mesh.RecalculateBounds();
+                meshFilter.sharedMesh = mesh;
+                if (vectorMaterial == null)
+                {
+                    Shader shader = Resources.Load<Shader>("EvolutionVector2D");
+                    if (shader == null) throw new InvalidOperationException("EvolutionVector2D shader missing.");
+                    ownedMaterial = new Material(shader) { hideFlags = HideFlags.DontSave };
+                }
+                assignedMaterial = vectorMaterial != null ? vectorMaterial : ownedMaterial;
+                meshRenderer.sharedMaterial = assignedMaterial;
+                var properties = new MaterialPropertyBlock();
+                properties.SetColor("_Color", color);
+                meshRenderer.SetPropertyBlock(properties);
+                polygon.offset = Vector2.zero;
+                polygon.isTrigger = false;
+                polygon.pathCount = 1;
+                polygon.SetPath(0, points);
+                IsInitialized = true;
+                meshRenderer.enabled = renderEnabled;
+                polygon.enabled = collisionEnabled;
             }
-            renderer.sharedMaterial = vectorMaterial != null ? vectorMaterial : ownedMaterial;
-            var properties = new MaterialPropertyBlock();
-            properties.SetColor("_Color", color);
-            renderer.SetPropertyBlock(properties);
-            PolygonCollider2D polygon = GetComponent<PolygonCollider2D>();
-            polygon.offset = Vector2.zero;
-            polygon.isTrigger = false;
-            polygon.pathCount = 1;
-            polygon.SetPath(0, points);
+            catch (Exception error)
+            {
+                failed = true;
+                ReleaseResources();
+                enabled = false;
+                Debug.LogException(error, this);
+            }
         }
 
         private void OnValidate() => NormalizeSize();
@@ -58,11 +94,22 @@ namespace Evolution.Source.Unity
             size.y = float.IsNaN(size.y) || float.IsInfinity(size.y) ? 2.8f : Mathf.Clamp(size.y, .1f, 10f);
         }
 
-        private void OnDestroy()
+        private void OnDestroy() => ReleaseResources();
+
+        private void ReleaseResources()
         {
-            if (meshFilter != null && meshFilter.sharedMesh == mesh) meshFilter.sharedMesh = null;
+            IsInitialized = false;
+            if (polygon != null) polygon.enabled = false;
+            if (meshFilter != null && meshFilter.sharedMesh == mesh) meshFilter.sharedMesh = previousMesh;
+            if (meshRenderer != null && meshRenderer.sharedMaterial == assignedMaterial)
+            {
+                meshRenderer.sharedMaterial = previousMaterial;
+                if (previousProperties != null) meshRenderer.SetPropertyBlock(previousProperties);
+            }
             if (mesh != null) Destroy(mesh);
             if (ownedMaterial != null) Destroy(ownedMaterial);
+            mesh = null;
+            ownedMaterial = null;
         }
     }
 }

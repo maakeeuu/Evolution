@@ -22,3 +22,9 @@ Camera view, player control model, creature type, water/weather details, generat
 - The contact fixture temporarily uses gravity-free XY motion and one rectangular obstacle. Camera/control model remains open; this does not commit the final game to a top-down design.
 - Use one fill silhouette (no outward outline) so visual boundary and PolygonCollider2D use the same coordinates. A small local unlit shader avoids new rendering packages.
 - MorphologyDemo2D is a demonstration driver only. Target interpolation is not an adaptation policy; motion intent is not learning; no generation/inheritance system is added in EV-CP1.
+
+
+## Integration Readiness lifecycle contract — 2026-11-24
+- Body and obstacle own their generated geometry and collider path while attached. Use dedicated prototype objects; externally supplied Mesh/Material assets are never destroyed. Previous render slots/property blocks are restored only if the component's assignment is still present; teardown disables its collider rather than restoring an unknown prior collider path.
+- Initialization failure is fail-closed: rendering/collision disabled, partial owned resources released, component disabled, one error. Recreate the component after fixing configuration; re-enable is not an implicit retry. A normal disable/re-enable preserves the valid shape.
+- Motor readiness is evaluated in FixedUpdate after Awake ordering has settled. Late-added Rigidbody2D is resolved when geometry next changes.

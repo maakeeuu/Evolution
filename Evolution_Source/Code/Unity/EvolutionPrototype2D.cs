@@ -17,7 +17,7 @@ namespace Evolution.Source.Unity
         {
             if (ownedRoot == null) return;
             ownedRoot.SetActive(true);
-            if (!useKeyboardControls) motor.SetMovementIntent(Vector2.right);
+            if (!useKeyboardControls && motor != null) motor.SetMovementIntent(Vector2.right);
         }
 
         private void OnDisable()
@@ -41,20 +41,35 @@ namespace Evolution.Source.Unity
             var creature = new GameObject("Source Creature");
             creature.transform.SetParent(ownedRoot.transform, false);
             creature.transform.position = new Vector3(-3f, 0f, 0f);
-            creature.AddComponent<CreatureBody2D>();
+            CreatureBody2D shape = creature.AddComponent<CreatureBody2D>();
+            if (!shape.IsInitialized) { AbortInitialization(); return; }
             motor = creature.AddComponent<CreatureMotor2D>();
             creature.AddComponent<MorphologyDemo2D>();
 
             var obstacle = new GameObject("Single Vector Obstacle");
             obstacle.transform.SetParent(ownedRoot.transform, false);
             obstacle.transform.position = new Vector3(.8f, 0f, 0f);
-            obstacle.AddComponent<VectorObstacle2D>();
+            VectorObstacle2D wall = obstacle.AddComponent<VectorObstacle2D>();
+            if (!wall.IsInitialized) { AbortInitialization(); return; }
 
             if (useKeyboardControls) creature.AddComponent<CreatureKeyboardInput2D>();
             else motor.SetMovementIntent(Vector2.right);
             Debug.Log("Evolution source fixture: one creature, one obstacle. " +
                 "Default movement pushes right into the obstacle for a contact test. " +
                 "Morphology is a demonstration, not adaptation or learning.", this);
+        }
+
+        private void AbortInitialization()
+        {
+            if (ownedRoot != null)
+            {
+                ownedRoot.SetActive(false);
+                Destroy(ownedRoot);
+            }
+            ownedRoot = null;
+            motor = null;
+            enabled = false;
+            Debug.LogError("Evolution fixture initialization failed; partial objects were removed.", this);
         }
 
         private void OnDestroy()

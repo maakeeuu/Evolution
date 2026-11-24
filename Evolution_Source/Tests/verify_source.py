@@ -65,6 +65,19 @@ class SourceTests(unittest.TestCase):
         self.assertNotIn('Tests/Unity',project)
         self.assertNotIn('UnityEngine',project)
 
+    def test_initialization_failure_and_resource_ownership(self):
+        for name in ('CreatureBody2D.cs','VectorObstacle2D.cs'):
+            text=source(name)
+            self.assertIn('catch (Exception error)',text)
+            self.assertIn('ReleaseResources();',text)
+            self.assertIn('if (failed) enabled = false;',text)
+            self.assertIn('polygon.enabled = false;',text)
+            self.assertIn('previousProperties',text)
+            self.assertNotIn('Destroy(vectorMaterial)',text)
+            self.assertIn('meshRenderer.sharedMaterial = previousMaterial;',text)
+        self.assertIn('!shape.IsInitialized',source('CreatureMotor2D.cs'))
+        self.assertIn('AbortInitialization()',source('EvolutionPrototype2D.cs'))
+
     def test_delimiters_smoke_check(self):
         # Strip comments and strings before simple delimiter checking. Not a parser.
         token=re.compile(r'//[^\n]*|/\*.*?\*/|@"(?:[^"]|"")*"|"(?:\\.|[^"\\])*"',re.S)

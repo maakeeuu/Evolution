@@ -30,6 +30,11 @@ namespace Evolution.Source.Unity
         private Rigidbody2D physicsBody;
         private Mesh mesh;
         private Material ownedMaterial;
+        private Material assignedMaterial;
+        private Material previousMaterial;
+        private Mesh previousMesh;
+        private MaterialPropertyBlock previousProperties;
+        private bool failed;
         private MaterialPropertyBlock properties;
         private Point2[] contour;
         private Vector2[] physicsContour;
@@ -40,10 +45,16 @@ namespace Evolution.Source.Unity
         private bool hasPendingTarget;
         private static readonly int ColorId = Shader.PropertyToID("_Color");
 
+        public bool IsInitialized => initialized;
         public Morphology CurrentMorphology => current;
         public uint GeometryRevision { get; private set; }
 
         private void Start() => physicsBody = GetComponent<Rigidbody2D>();
+
+        private void OnEnable()
+        {
+            if (failed) enabled = false;
+        }
 
         private void Awake()
         {
@@ -51,23 +62,44 @@ namespace Evolution.Source.Unity
             meshFilter = GetComponent<MeshFilter>();
             meshRenderer = GetComponent<MeshRenderer>();
             polygon = GetComponent<PolygonCollider2D>();
-            current = new Morphology(initialWidth, initialHeight, initialForwardBias,
-                initialDorsalBias, initialLateralLobes);
-            if (!hasPendingTarget) target = current;
-            contour = new Point2[resolution];
-            physicsContour = new Vector2[resolution];
-            vertices = new Vector3[resolution + 1];
-            mesh = new Mesh { name = "Evolution Source Creature", hideFlags = HideFlags.DontSave };
-            mesh.MarkDynamic();
-            meshFilter.sharedMesh = mesh;
-            properties = new MaterialPropertyBlock();
-            meshRenderer.sharedMaterial = ResolveMaterial();
-            meshRenderer.sortingOrder = 10;
-            polygon.offset = Vector2.zero;
-            polygon.isTrigger = false;
-            polygon.pathCount = 1;
-            Publish(current, true);
-            initialized = true;
+            previousMesh = meshFilter.sharedMesh;
+            previousMaterial = meshRenderer.sharedMaterial;
+            previousProperties = new MaterialPropertyBlock();
+            meshRenderer.GetPropertyBlock(previousProperties);
+            bool renderEnabled = meshRenderer.enabled, collisionEnabled = polygon.enabled;
+            meshRenderer.enabled = false;
+            polygon.enabled = false;
+            try
+            {
+                assignedMaterial = ResolveMaterial();
+                current = new Morphology(initialWidth, initialHeight, initialForwardBias,
+                    initialDorsalBias, initialLateralLobes);
+                if (!hasPendingTarget) target = current;
+                contour = new Point2[resolution];
+                physicsContour = new Vector2[resolution];
+                vertices = new Vector3[resolution + 1];
+                mesh = new Mesh { name = "Evolution Source Creature", hideFlags = HideFlags.DontSave };
+                mesh.MarkDynamic();
+                properties = new MaterialPropertyBlock();
+                meshRenderer.sharedMaterial = assignedMaterial;
+                meshRenderer.sortingOrder = 10;
+                polygon.offset = Vector2.zero;
+                polygon.isTrigger = false;
+                polygon.pathCount = 1;
+                Publish(current, true);
+                meshFilter.sharedMesh = mesh;
+                initialized = true;
+                meshRenderer.enabled = renderEnabled;
+                polygon.enabled = collisionEnabled;
+            }
+            catch (Exception error)
+            {
+                failed = true;
+                initialized = false;
+                ReleaseResources();
+                enabled = false;
+                Debug.LogException(error, this);
+            }
         }
 
         public void SetMorphologyTarget(Morphology value)
@@ -113,6 +145,8 @@ namespace Evolution.Source.Unity
             mesh.RecalculateBounds();
             polygon.SetPath(0, physicsContour);
             GeometryRevision++;
+            // A motor/Rigidbody may have been added after this component's Start.
+            if (physicsBody == null) physicsBody = GetComponent<Rigidbody2D>();
             if (physicsBody != null) physicsBody.WakeUp();
             ApplyColor();
         }
@@ -127,7 +161,12 @@ namespace Evolution.Source.Unity
 
         private Material ResolveMaterial()
         {
-            if (vectorMaterial != null) return vectorMaterial;
+            if (vectorMaterial != null)
+            {
+                if (!vectorMaterial.HasProperty(ColorId))
+                    throw new InvalidOperationException("Vector material must expose _Color.");
+                return vectorMaterial;
+            }
             Shader shader = Resources.Load<Shader>("EvolutionVector2D");
             if (shader == null)
                 throw new InvalidOperationException("Include Art/Resources/EvolutionVector2D.shader at integration.");
@@ -160,10 +199,23 @@ namespace Evolution.Source.Unity
 
         private void OnDestroy()
         {
-            if (meshFilter != null && meshFilter.sharedMesh == mesh) meshFilter.sharedMesh = null;
+            initialized = false;
+            ReleaseResources();
+        }
+
+        private void ReleaseResources()
+        {
             if (polygon != null) polygon.enabled = false;
+            if (meshFilter != null && meshFilter.sharedMesh == mesh) meshFilter.sharedMesh = previousMesh;
+            if (meshRenderer != null && meshRenderer.sharedMaterial == assignedMaterial)
+            {
+                meshRenderer.sharedMaterial = previousMaterial;
+                if (previousProperties != null) meshRenderer.SetPropertyBlock(previousProperties);
+            }
             if (mesh != null) Destroy(mesh);
             if (ownedMaterial != null) Destroy(ownedMaterial);
+            mesh = null;
+            ownedMaterial = null;
         }
     }
 }
