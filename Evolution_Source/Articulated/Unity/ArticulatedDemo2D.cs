@@ -8,6 +8,8 @@ namespace Evolution.Articulated.Unity
     public sealed class ArticulatedDemo2D : MonoBehaviour
     {
         public ArticulatedOrganism2D Organism { get; private set; }
+        public bool InitialWaveDrive { get; set; }=true;
+        public MeshRenderer TerrainRenderer { get; private set; }
         private GameObject ownedRoot;
         private Mesh terrainMesh;
         private Material terrainMaterial;
@@ -39,12 +41,12 @@ namespace Evolution.Articulated.Unity
                 terrainMaterial=new Material(shader) { hideFlags=HideFlags.DontSave };
                 terrainMaterial.SetColor("_Color",new Color(.4f,.38f,.3f,1));
                 ground.AddComponent<MeshFilter>().sharedMesh=terrainMesh;
-                ground.AddComponent<MeshRenderer>().sharedMaterial=terrainMaterial;
+                TerrainRenderer=ground.AddComponent<MeshRenderer>();TerrainRenderer.sharedMaterial=terrainMaterial;
                 var organism=new GameObject("Articulated organism");organism.transform.SetParent(ownedRoot.transform,false);
                 organism.transform.position=new Vector3(-1.8f,1f,0);
                 Organism=organism.AddComponent<ArticulatedOrganism2D>();
                 organism.AddComponent<ArticulatedOrganismView2D>();
-                organism.AddComponent<MuscleWaveDriver2D>();
+                organism.AddComponent<MuscleWaveDriver2D>().enabled=InitialWaveDrive;
                 organism.AddComponent<ArticulationDiagnostics2D>();
                 Debug.Log("EV-CP2: physical hinges and pull-only muscles. Wave excitation is NOT learning; net locomotion is not yet validated.",this);
             }

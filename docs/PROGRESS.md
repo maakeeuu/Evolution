@@ -1,6 +1,11 @@
 # Progress — Evolution
 
-## Current milestone: EV-CP2 — Articulated Organism
+## Current milestone: EV-CP3 — longitudinal rod skin
+
+Specification: [EV_CP3_SPEC.md](EV_CP3_SPEC.md). Handoff: [HANDOFF_EV_CP3.md](HANDOFF_EV_CP3.md).
+Baseline prepared from bf1e333, separate safe scene path and four inspection modes; geometry replacement follows in a separate checkpoint. No Unity Editor available, no native acceptance or screenshot. Exact historical approved rod not found. [Validation](EV_CP3_VALIDATION.md).
+
+## Previous foundation: EV-CP2 — Articulated Organism
 
 **Milestone specification:** [EV_CP2_SPEC.md](EV_CP2_SPEC.md)  
 **Agent handoff:** [HANDOFF_EV_CP2.md](HANDOFF_EV_CP2.md)  

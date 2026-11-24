@@ -12,7 +12,7 @@
 - The initial organism should be minimal and stick-like, not a predetermined animal with fixed legs, head, tail or a predefined evolutionary tree.
 - Keep Evolution_Source/ canonical and isolate future EV-CP2 runtime files from Assets/Evolution/EVCP1/.
 - PEE is a separate project and must not be modified.
-- Full EV-CP2 requirements: docs/EV_CP2_SPEC.md. Agent kickoff instructions: docs/HANDOFF_EV_CP2.md.
+- Active EV-CP3 requirements: docs/EV_CP3_SPEC.md; handoff docs/HANDOFF_EV_CP3.md. CP2 remains the physical foundation.
 
 ## Historical and temporary decisions below
 
@@ -92,3 +92,9 @@ Camera view, player control model, creature type, water/weather details, generat
 - Keep fixedDeltaTime in game seconds invariant rather than trading away joint accuracy at speed. Do not increase maximumDeltaTime to conceal low throughput; display measured FixedUpdate advancement separately from requested scale.
 - Use IMGUI (one required Unity built-in module) instead of pulling in uGUI/Input System for five buttons. Game View focus is required; keyboard shortcuts use IMGUI key events, ignoring modifiers. Controls are confined to an explicitly created demo, not CP1 or project startup.
 - A single static adapter owner plus independently tested pure value lease controls writes. Restore the prior per-enable value only if last written value still matches; preserve a detected external writer. Same-value writes cannot be detected without cooperation from all time managers. Disable duplicate controllers rather than multiplying or fighting time scales.
+
+
+## EV-CP3 baseline — 2026-11-24
+- Exact historical approved rod could not be identified in published main; do not claim exact restoration or use the radial prototype as target.
+- Preserve all physical parameters. Establish the old capsule-patch renderer baseline before replacing it with anatomy-driven longitudinal skin.
+- Separate safe EVCP3_Rod scene path; four inspection modes, actual runtime anatomy report, explicit radial-conflict refusal. No Unity/scene/screenshot acceptance is implied.

@@ -15,13 +15,23 @@ namespace Evolution.Articulated.Unity
         [SerializeField] private bool showShell=true;
         [SerializeField] private bool showSkeleton=true;
         [SerializeField] private bool showMuscles=true;
+        private bool showJoints=true,showColliders;
+        public enum InspectionMode { Normal, ShellOnly, SkeletonColliders, JointsMuscles }
+        public void SetInspection(InspectionMode mode)
+        {
+            showShell=mode==InspectionMode.Normal || mode==InspectionMode.ShellOnly;
+            showSkeleton=mode==InspectionMode.SkeletonColliders;
+            showColliders=showSkeleton;
+            showJoints=showSkeleton || mode==InspectionMode.JointsMuscles;
+            showMuscles=mode==InspectionMode.JointsMuscles;
+        }
         private ArticulatedOrganism2D organism;
         private Material material;
         private readonly List<GameObject> ownedObjects=new List<GameObject>();
         private readonly List<Mesh> meshes=new List<Mesh>();
         private MeshRenderer[] shells,jointMarkers;
         private MaterialPropertyBlock properties;
-        private LineRenderer[] bones,muscles;
+        private LineRenderer[] bones,muscles,colliderLines;
         private bool built,failed;
         private void Awake()
         { organism=GetComponent<ArticulatedOrganism2D>();properties=new MaterialPropertyBlock(); }
@@ -35,7 +45,8 @@ namespace Evolution.Articulated.Unity
                 if(!built) Build();
                 for(int i=0;i<shells.Length;i++)
                 { shells[i].enabled=showShell && organism.enabled;bones[i].enabled=showSkeleton && organism.enabled; }
-                for(int i=0;i<jointMarkers.Length;i++) jointMarkers[i].enabled=showSkeleton && organism.enabled;
+                for(int i=0;i<jointMarkers.Length;i++) jointMarkers[i].enabled=showJoints && organism.enabled;
+                for(int i=0;i<colliderLines.Length;i++) colliderLines[i].enabled=showColliders && organism.enabled;
                 for(int i=0;i<muscles.Length;i++)
                 {
                     MuscleSpec m=organism.GetMuscle(i);
@@ -61,11 +72,16 @@ namespace Evolution.Articulated.Unity
             material=new Material(shader) { name="EV-CP2 vector view",hideFlags=HideFlags.DontSave };
             if(!material.HasProperty("_Color")) throw new InvalidOperationException("Vector shader requires _Color.");
             shells=new MeshRenderer[organism.BoneCount];bones=new LineRenderer[organism.BoneCount];
+            colliderLines=new LineRenderer[organism.BoneCount];
             for(int i=0;i<organism.BoneCount;i++)
             {
                 Transform bone=organism.GetBody(i).transform;
                 GameObject patch=CreateObject("Envelope patch "+i,bone);
                 Vector2[] contour=organism.GetCollider(i).GetPath(0);
+                colliderLines[i]=CreateLine("Collider outline "+i,bone,.009f,22,false);
+                colliderLines[i].positionCount=contour.Length;colliderLines[i].loop=true;
+                for(int j=0;j<contour.Length;j++) colliderLines[i].SetPosition(j,new Vector3(contour[j].x,contour[j].y,-.03f));
+                SetColor(colliderLines[i],new Color(.2f,.5f,.9f,1));
                 var vertices=new Vector3[contour.Length+1];
                 for(int j=0;j<contour.Length;j++) vertices[j+1]=new Vector3(contour[j].x,contour[j].y,0);
                 var mesh=new Mesh { name="EV-CP2 shared contour patch "+i,hideFlags=HideFlags.DontSave };

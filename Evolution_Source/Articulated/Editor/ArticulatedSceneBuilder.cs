@@ -11,6 +11,9 @@ namespace Evolution.Articulated.EditorTools
     public static class ArticulatedSceneBuilder
     {
         public const string DemoPath="Assets/Evolution/EVCP2/Scenes/EVCP2_Articulated.unity";
+        public const string RodPath="Assets/Evolution/EVCP2/Scenes/EVCP3_Rod.unity";
+        [MenuItem("Tools/Evolution/Create/Open EV-CP3 Rod Demo")]
+        public static void CreateOrOpenRod() => CreateOrOpen(RodPath,false,true);
         public const string ProbePath="Assets/Evolution/EVCP2/Scenes/EVCP2_IsolatedJoint.unity";
         [MenuItem("Tools/Evolution/Create/Open EV-CP2 Demo")]
         public static void CreateOrOpenDemo() => CreateOrOpen(DemoPath,false);
@@ -28,25 +31,27 @@ namespace Evolution.Articulated.EditorTools
             if(!EditorUtility.DisplayDialog("EV-CP2 time controls","Add missing time controls to this existing EV-CP2 bootstrap? No other objects/configuration will be replaced. Save with Ctrl+S afterwards.","Add","Open unchanged")) return;
             Undo.AddComponent<SimulationTimeControl2D>(found.gameObject);EditorSceneManager.MarkSceneDirty(scene);
         }
-        private static void CreateOrOpen(string path,bool probe)
+        private static void CreateOrOpen(string path,bool probe,bool rod=false)
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode)
             { EditorUtility.DisplayDialog("EV-CP2","Exit Play Mode before creating/opening a scene.","OK");return; }
             if(SceneManager.GetActiveScene().path==path)
-            { EnsureTimeControl(SceneManager.GetActiveScene(),probe);return; }
+            { if(!rod) EnsureTimeControl(SceneManager.GetActiveScene(),probe);return; }
             // Respect cancellation and unsaved edits in every open scene before switching.
             if(!EditorSceneManager.SaveModifiedScenesIfUserWantsTo()) return;
             if(File.Exists(path))
             {
                 // Opening an existing user-edited demo must never regenerate or overwrite it.
                 Scene existing=EditorSceneManager.OpenScene(path,OpenSceneMode.Single);
-                EnsureTimeControl(existing,probe);return;
+                if(!rod) EnsureTimeControl(existing,probe);return;
             }
             Directory.CreateDirectory(Path.GetDirectoryName(path));AssetDatabase.Refresh();
             Scene scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
             var bootstrap=new GameObject(probe ? "EVCP2 Isolated Joint Probe" : "EVCP2 Bootstrap");
             Undo.RegisterCreatedObjectUndo(bootstrap,"Create EV-CP2 bootstrap");
             if(probe) bootstrap.AddComponent<SingleJointProbe2D>();
+            else if(rod)
+            { bootstrap.name="EVCP3 Rod Bootstrap";bootstrap.AddComponent<SimulationTimeControl2D>();bootstrap.AddComponent<RodDemo2D>(); }
             else
             { bootstrap.AddComponent<SimulationTimeControl2D>();bootstrap.AddComponent<ArticulatedDemo2D>(); }
             EditorSceneManager.MarkSceneDirty(scene);

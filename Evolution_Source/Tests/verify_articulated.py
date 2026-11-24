@@ -13,7 +13,7 @@ class ArticulatedChecks(unittest.TestCase):
         actual={p.relative_to(mirror) for p in mirror.rglob('*') if p.is_file() and p.suffix!='.meta' and 'Scenes' not in p.relative_to(mirror).parts}
         for p in (mirror/'Scenes').glob('*'):
             if p.is_file() and p.suffix!='.meta':
-                self.assertIn(p.name,{'EVCP2_Articulated.unity','EVCP2_IsolatedJoint.unity'})
+                self.assertIn(p.name,{'EVCP2_Articulated.unity','EVCP2_IsolatedJoint.unity','EVCP3_Rod.unity'})
         self.assertEqual(expected,actual)
         self.assertGreaterEqual(len(expected),11)
         for p in expected:self.assertEqual((SOURCE/p).read_bytes(),(mirror/p).read_bytes(),str(p))

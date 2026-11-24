@@ -15,7 +15,7 @@
 ## Порядок чтения и источник истины
 1. Прочитай README.md, MASTER_PROMPT_RU.md и docs/PROGRESS.md.
 2. Прочитай docs/DECISIONS.md и handoff активного milestone.
-3. Полностью прочитай спецификацию активного milestone. Для EV-CP2 это docs/EV_CP2_SPEC.md.
+3. Полностью прочитай спецификацию активного milestone. Для EV-CP3 это docs/EV_CP3_SPEC.md.
 4. Спецификация активного milestone уточняет и, где явно указано, supersedes исторические цели ранних прототипов в MASTER_PROMPT_RU.md. Не реализуй устаревший milestone вместо текущего.
 5. Открой .agents/skills/SKILL_INDEX.md.
 6. Загрузи только 1–3 профильных навыка из .agents/skills/<skill-name>/SKILL.md.
