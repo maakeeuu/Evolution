@@ -61,7 +61,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          dotnet run --project Evolution_Source/Tests/AdapterSyntax/Evolution.AdapterSyntax.csproj --configuration Release -- Evolution_Source | tee "$RUNNER_TEMP/adapter-syntax.log"
+          python3 Evolution_Source/Tests/run_checked.py dotnet run --project Evolution_Source/Tests/AdapterSyntax/Evolution.AdapterSyntax.csproj --configuration Release -- Evolution_Source | tee "$RUNNER_TEMP/adapter-syntax.log"
       - name: Independent Python references and wiring checks
         shell: bash
         run: python3 -m unittest discover -s Evolution_Source/Tests -p 'verify_*.py' -v
