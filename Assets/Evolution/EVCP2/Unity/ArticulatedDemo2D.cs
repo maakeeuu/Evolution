@@ -44,6 +44,7 @@ namespace Evolution.Articulated.Unity
                 organism.AddComponent<ArticulatedOrganism2D>();
                 organism.AddComponent<ArticulatedOrganismView2D>();
                 organism.AddComponent<MuscleWaveDriver2D>();
+                organism.AddComponent<ArticulationDiagnostics2D>();
                 Debug.Log("EV-CP2: physical hinges and pull-only muscles. Wave excitation is NOT learning; net locomotion is not yet validated.",this);
             }
             catch(Exception error) { Release();enabled=false;Debug.LogException(error,this); }

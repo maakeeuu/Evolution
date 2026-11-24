@@ -61,6 +61,31 @@ internal static class Program
                 Check(parentTorque<0,"upper muscle has meaningful moment arm");
             }
         }
+        // Reproduce the actual default tip load and attachment geometry, not a generic lever.
+        var neutral=ChainDefinition.Create();
+        for(int child=1;child<neutral.Count;child++)
+        {
+            var path=new MuscleSpec(neutral,child,1);
+            var oldSettings=new MuscleSettings(path.RestLength);
+            var drive=MuscleMechanics.DemonstrationSettings(path.RestLength);
+            double tipWeightMoment=neutral[child].Mass*9.81*neutral[child].Length*.5;
+            double aX=neutral.CenterX(child-1)+path.ParentAnchor.X;
+            double bX=neutral.CenterX(child)+path.ChildAnchor.X;
+            double dx=bX-aX,dy=path.ChildAnchor.Y-path.ParentAnchor.Y;
+            Near(Math.Sqrt(dx*dx+dy*dy),path.RestLength,1e-12,"actual neutral attachment length");
+            double oldTorque=MuscleMechanics.Tension(oldSettings,path.RestLength,0,1)*Math.Abs(path.ChildAnchor.Y);
+            double newTorque=MuscleMechanics.Tension(drive,path.RestLength,0,.7)*Math.Abs(path.ChildAnchor.Y);
+            Check(oldTorque<tipWeightMoment,"reproduced old underpowered gravity-loaded drive");
+            Check(newTorque>3*tipWeightMoment,"demo tip load torque margin at representative wave activation");
+            Near(MuscleMechanics.TargetLength(drive,1),path.RestLength*.7,1e-12,"target length");
+            var lower=new MuscleSpec(neutral,child,-1);
+            var fa=MuscleMechanics.ForceOnParent(new Point2(aX,path.ParentAnchor.Y),new Point2(bX,path.ChildAnchor.Y),10);
+            var fb=MuscleMechanics.ForceOnParent(new Point2(aX,lower.ParentAnchor.Y),new Point2(bX,lower.ChildAnchor.Y),10);
+            double hinge=neutral.CenterX(child-1)+neutral[child-1].Length*.5;
+            double upperTorque=(aX-hinge)*fa.Y-path.ParentAnchor.Y*fa.X;
+            double lowerTorque=(aX-hinge)*fb.Y-lower.ParentAnchor.Y*fb.X;
+            Check(upperTorque*lowerTorque<0,"antagonists give opposite moments at actual neutral pose");
+        }
         var m=new MuscleSettings(.4);
         for(int i=0;i<=1000;i++)
         {

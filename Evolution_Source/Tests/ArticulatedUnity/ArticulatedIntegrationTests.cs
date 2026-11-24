@@ -56,6 +56,23 @@ namespace Evolution.Articulated.Tests
             Assert.Greater(peak,.1);Assert.Greater(Mathf.Abs(organism.GetJoint(0).jointAngle-angle),.5f);
             Assert.Less(Vector2.Distance(before,CenterOfMass()),.02f,"Internal actuators must not propel an isolated COM.");
         }
+        [UnityTest] public IEnumerator IsolatedNativeABCDMustActuallyBendAndConserveMomentum()
+        {
+            Object.Destroy(host);yield return null;
+            host=new GameObject("Native isolated probe");
+            var probe=host.AddComponent<SingleJointProbe2D>();
+            float deadline=Time.realtimeSinceStartup+15;
+            while(!probe.Complete && Time.realtimeSinceStartup<deadline) yield return null;
+            Assert.IsTrue(probe.Complete,"Native harness timed out, possibly no FixedUpdate / paused simulation.");
+            Assert.IsTrue(probe.Passed,probe.Result);
+        }
+        [UnityTest] public IEnumerator DisabledActuatorsPublishZeroForce()
+        {
+            organism.SetActivationCommand(0,1);yield return new WaitForFixedUpdate();
+            organism.MusclesEnabled=false;yield return new WaitForFixedUpdate();
+            for(int i=0;i<organism.MuscleCount;i++)
+            { Assert.AreEqual(0,organism.GetTension(i));Assert.AreEqual(Vector2.zero,organism.GetAppliedForce(i)); }
+        }
         [UnityTest] public IEnumerator NativeRenderAndColliderCoordinatesMatch()
         {
             host.AddComponent<ArticulatedOrganismView2D>();yield return null;yield return new WaitForEndOfFrame();

@@ -79,3 +79,8 @@ Camera view, player control model, creature type, water/weather details, generat
 - Separate organism physics/actuator owner, optional wave command driver, optional render view and scene bootstrap. Read actual angular/body/contact state as the future sensing seam; do not introduce empty AI abstractions.
 - First envelope is the opaque geometric union of overlapping convex patches with exact per-patch mesh/collider correspondence and interpolation inherited from the same body. It is a deliberately incomplete shell milestone, not a smooth global skin. Growth/topology adaptation is not implemented or faked by rebuilding.
 - Reuse the single user-validated Built-in shader resource from EV-CP1 without changing any EV-CP1 file. New runtime resources are owned/released, and no packages, global physics settings or hand-authored metadata are required.
+
+## EV-CP2 articulation repair A — 2026-11-24
+- Separate general muscle defaults from explicit demo load tuning. A source-level gravity/lever budget is reproducible evidence of insufficient previous demo drive, not proof of the sole native failure cause. Do not change gravity/friction/global solver settings to hide it.
+- Inspector diagnostics read native state and last completed adapter force batch; they are off by default and quarter-second sampled in unscaled time. Colors still indicate activation only, never proof of force/movement.
+- Native probe requires real opposite signed joint displacement plus conservation, not just nonzero tension. Fresh specimens isolate antagonist tests without live-body teleport/velocity reset. No learning/locomotion claims.

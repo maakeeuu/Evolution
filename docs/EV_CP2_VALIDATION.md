@@ -18,7 +18,7 @@
   а не вложенными движущимися Transform. Соседние перекрывающиеся части не сталкиваются;
   несоседние self-contact остаются включёнными. Суставные motor отключены, limits ±40°.
 - Парные мышцы имеют точки крепления по обе стороны шарнира. Activation плавно сокращает
-  preferred length. Pull-only spring/damper ограничен 12 N, одинаковая и противоположная сила
+  preferred length. Pull-only spring/damper демонстрации ограничен 60 N, одинаковая и противоположная сила
   применяется в двух точках через AddForceAtPosition в FixedUpdate; никаких команд скорости корня.
 - Отдельный MuscleWaveDriver2D выдаёт открытое синусоидальное возбуждение.
   Это инструмент проверки привода, **не обучение и не доказательство освоенной локомоции**.
@@ -52,7 +52,7 @@
       Простое отключение driver очищает команды, но passive spring tension может сохраниться;
       для полного удаления приводных сил используется именно Muscles Enabled = false.
 - [ ] **Activation:** включите мышцы/driver. Проверьте изменение реального jointAngle и сегментов,
-      а не только цвет/толщину линий. GetActivation/GetTension доступны из debugger; tension 0..12 N.
+      а не только цвет/толщину линий. GetActivation/GetTension доступны из debugger; tension 0..60 N.
 - [ ] **Antagonists:** отключите driver. Из debugger/временного локального harness подайте
       SetActivationCommand(0,1), остальные 0, затем ClearCommands и команду на мышцу 1.
       Соседние сегменты должны сгибаться в противоположные стороны.
@@ -106,3 +106,19 @@ CI только разбирает синтаксис этих исходник�
 Пришлите commit SHA, первый полный Console error (если есть), короткое видео passive/active,
 значения jointAngle/anchor gap и результат чек-листа. Следующий gate — нативная проверка
 этого среза, затем стабилизация контактов и развитие настоящей гладкой оболочки.
+
+## Checkpoint A: исправление силового бюджета и обязательный native gate
+
+Пользователь проверил d1ce36b: активация видна, **сгибания на опоре нет**. Это неуспешная локальная проверка.
+В исходниках подтверждён недостаточный бюджет привода: старый максимальный момент в нейтральном положении меньше момента веса одного крайнего сегмента. Демонстрационный профиль теперь 60 N, 600 N/m, 6 Ns/m; общие Core defaults сохранены. Единственность причины и результат исправления в Unity НЕ подтверждены.
+
+На организме включите Capture Diagnostics у ArticulationDiagnostics2D. Snapshot обновляется 4 раза в реальную секунду, HUD отсутствует. Он показывает command/activation/tension (N), L/target (m), rate (m/s), фактическую величину силы, world attachment points; по суставам angle/speed, limits/motor/enabled/active, обе world anchors и gap; по телам p/v/omega/mass/constraints/sleep; COM, active counts, PhysicsSteps, timeScale, fixedDt и simulationMode. Сила — последний опубликованный batch, тело/сустав — фактическое состояние при чтении.
+
+Изолированная проверка: отдельная Empty Scene, один объект SingleJointProbe2D, identity Transform, без других объектов/поверхностей/сил. Это временный путь до Editor builder следующего checkpoint. Никаких manual gravity/velocity edits не нужно. Play запускает A/B/D/C/D (~6 игровых секунд); результат доступен в Inspector Result и Console.
+- A: обе команды 0, drift angle <0.1°, v<.001 m/s, omega<.1°/s.
+- B/C: отдельные свежие экземпляры для каждого антагониста; tension>.1 N и фактическая peak joint deflection >5°, противоположные знаки.
+- D: команды сняты, activation<.001 через 1 игровую секунду. Не требуем возврата в исходную позу: упругость и инерция остаются физическими.
+- В течение теста: нет контактов, motors=false, COM drift<.002 m, |total momentum|<.002 kg m/s, anchor gap<.01 m. Эти малые абсолютные допуски для ~1.7 m / .67 kg fixture — начальный численный gate, не утверждение измеренной точности solver.
+- FAIL: приложите полный Result, Snapshot и Console. Не принимайте изменение цвета или positive tension за PASS. ABORTED при disable требует нового Play.
+
+Только после PASS изолированного режима проверяйте поверхность 60 игровых секунд: падение, contact, max anchor gap<.02 m, limits ±40° с solver tolerance, отсутствие разлёта/сильного дрожания. Отдельно passive и wave drive. Локомоция не обещана. Автоматические PlayMode cases лишь подготовлены, **не запускались**.

@@ -4,7 +4,7 @@
 
 **Milestone specification:** [EV_CP2_SPEC.md](EV_CP2_SPEC.md)  
 **Agent handoff:** [HANDOFF_EV_CP2.md](HANDOFF_EV_CP2.md)  
-**Implementation status:** first physical slice implemented and mirrored in EVCP2; native Unity validation pending.  
+**Implementation status:** user-run first slice failed surface articulation; checkpoint A repairs demonstrated drive load budget and prepares native diagnostic gate. Native fix acceptance pending.  
 **Previous milestone:** EV-CP1 technical radial-form fixture, integrated under Assets/Evolution/EVCP1/.
 
 ### EV-CP2 target
@@ -214,3 +214,11 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 
 - Pre-publication review checked target-version HingeJoint2D/point-force APIs against Unity 6000.6 reference. Corrected local-to-world attachment conversion to GetRelativePoint (GetPoint is world-to-local) and added a source regression contract. Cached the view property block rather than allocating one per muscle/frame. Rounded Inspector float bounds on conversion to strict double Core settings; no runtime anatomy rebuild.
 - Executed locally before publication: 35/35 Python reference/structural groups passed; assembly JSON, csproj XML and workflow YAML parsed. New Core executed successfully in checkpoint 1 CI; checkpoint 2 expanded syntax/integration checks still require exact-HEAD CI.
+
+## EV-CP2 checkpoint A — articulation load fix and native diagnostic gate, 2026-11-24
+
+- Audited current main d1ce36bdd1956ed92d296263f4796b8c64cb82a9 and all requested source/test/mirror paths. User reports the previous demo renders activation but does NOT articulate on the surface. This is failed user validation, not a passed Unity checkpoint.
+- Verified a concrete nominal load-budget defect: old spring/force settings produce less tip hinge moment than gravity requires for a single default segment, even at full activation. General Core settings remain unchanged; explicit DemonstrationSettings increases actuator capacity to 60 N / 600 N/m / 6 Ns/m. Actual neutral attachment length, target length, opposite moments and a >3x default single-tip gravity margin at activation .7 are now regression assertions. This explains an underpowered surface demo; it does NOT establish the sole cause of the user's native observation. No root/velocity animation, global settings, random forces or CP1 changes.
+- Added Inspector-only optional diagnostics for every command/activation/tension/length/target/rate/applied force, world muscle points, joint angles/speeds/limits/anchors/gaps/state, body position/velocity/constraints/awake state, COM, active topology and FixedUpdate count.
+- Added native SingleJointProbe2D: fresh two-body/one-hinge/two-muscle specimens, zero gravity/damping, no ground/driver, default zero velocities. A passive drift, B first actuator, D activation decay, C fresh opposite actuator and D release; PASS requires >5-degree opposite real joint deflections, positive tension, COM drift <.002 m, total momentum <.002 kg m/s and anchor gap <.01 m. It never resets a live body's pose/velocity to fake acceptance. On disable aborts; restart Play to rerun.
+- Prepared additional native regression cases; they have NOT run. No Unity Editor or compiler is installed here. All native A/B/C/D, surface 60 s, rendering and API binding remain pending in 6000.6.10f1. Surface/scene/time acceptance must not be claimed from standalone results.

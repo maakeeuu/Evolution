@@ -12,8 +12,26 @@ class ArticulatedChecks(unittest.TestCase):
         expected={p.relative_to(SOURCE) for p in SOURCE.rglob('*') if p.is_file() and p.suffix!='.meta'}
         actual={p.relative_to(mirror) for p in mirror.rglob('*') if p.is_file() and p.suffix!='.meta'}
         self.assertEqual(expected,actual)
-        self.assertEqual(len(expected),9)
+        self.assertGreaterEqual(len(expected),11)
         for p in expected:self.assertEqual((SOURCE/p).read_bytes(),(mirror/p).read_bytes(),str(p))
+    def test_default_tip_load_regression(self):
+        for i in range(1,4):
+            scale=.96**i;parent=.96**(i-1)
+            length=.85*scale;radius=.14*scale;mass=.35*scale*scale
+            rest=math.hypot(.25*.85*(scale+parent),.72*.14*(scale-parent))
+            old=min(12,90*.3*rest)*radius*.72
+            new=min(60,600*.3*.7*rest)*radius*.72
+            gravity=mass*9.81*length*.5
+            self.assertLess(old,gravity);self.assertGreater(new,3*gravity)
+        s=(UNITY/'ArticulatedOrganism2D.cs').read_text()
+        self.assertIn('MuscleMechanics.DemonstrationSettings',s)
+    def test_probe_has_native_not_just_force_acceptance(self):
+        s=(UNITY/'SingleJointProbe2D.cs').read_text()
+        for token in ['jointAngle','maxComDrift','maxMomentum','angles[0]*angles[1]<0','Mathf.Abs(angles[side])>5','ConfigureIsolatedJoint','ClearCommands']:
+            self.assertIn(token,s)
+        d=(UNITY/'ArticulationDiagnostics2D.cs').read_text()
+        for token in ['jointSpeed','jointAngle','GetAppliedForce','GetLengthRate','GetTargetLength','CenterOfMass','isActiveAndEnabled']:
+            self.assertIn(token,d)
     def test_engine_independent_assembly(self):
         core=json.loads((SOURCE/'Core/Evolution.Articulated.Core.asmdef').read_text())
         self.assertTrue(core['noEngineReferences'])

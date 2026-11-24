@@ -39,6 +39,16 @@ namespace Evolution.Articulated.Core
 
     public static class MuscleMechanics
     {
+        // Explicit demonstration load budget, separate from the general constructor defaults.
+        // Default tip gravity moment is 1.46 Nm; original drive supplied only ~1.13 Nm.
+        public static MuscleSettings DemonstrationSettings(double restLength) =>
+            new MuscleSettings(restLength,60,600,6,.3);
+        public static double TargetLength(MuscleSettings settings,double activation)
+        {
+            Checks.Range(settings.RestLength,.01,4,nameof(settings));
+            Checks.Range(activation,0,1,nameof(activation));
+            return settings.RestLength*(1-settings.Contraction*activation);
+        }
         // Pull-only series spring/damper. Positive lengthRate means stretching.
         // Units: m, m/s, N/m, Ns/m, N. Never produces a compressive force.
         public static double Tension(MuscleSettings settings,double length,double lengthRate,double activation)
@@ -48,7 +58,7 @@ namespace Evolution.Articulated.Core
             Checks.Range(activation,0,1,nameof(activation));
             // A default(struct) settings value is not a valid muscle.
             Checks.Range(settings.RestLength,.01,4,nameof(settings));
-            double target=settings.RestLength*(1-settings.Contraction*activation);
+            double target=TargetLength(settings,activation);
             return Math.Max(0,Math.Min(settings.MaxForce,
                 settings.Stiffness*(length-target)+settings.Damping*lengthRate));
         }

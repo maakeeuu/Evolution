@@ -15,6 +15,32 @@ namespace Evolution.Articulated.Unity
         [SerializeField, Range(.94f,1f)] private float taper=.96f;
         [SerializeField, Range(5f,60f)] private float jointLimit=40f;
         [SerializeField] private bool musclesEnabled=true;
+        private bool isolatedJoint;
+        private double[] lengths,lengthRates,targets;
+        public long PhysicsSteps { get; private set; }
+        // Creation-time test configuration only. Never changes velocities/transforms of live bodies.
+        public void ConfigureIsolatedJoint()
+        {
+            if(ownedRoot!=null || IsInitialized) throw new InvalidOperationException("Configure before Start.");
+            segmentCount=2;isolatedJoint=true;
+        }
+        public double GetCommand(int index) => commands[index];
+        public double GetLength(int index) => lengths[index];
+        public double GetTargetLength(int index) => targets[index];
+        public double GetLengthRate(int index) => lengthRates[index];
+        public Vector2 GetAppliedForce(int index) => forceA[index];
+        public Vector2 GetMusclePointA(int index) => pointA[index];
+        public Vector2 GetMusclePointB(int index) => pointB[index];
+        public Vector2 CenterOfMass
+        {
+            get
+            {
+                Vector2 sum=Vector2.zero;float mass=0;
+                if(!IsInitialized) return sum;
+                foreach(var body in bodies) if(body!=null) { sum+=body.mass*body.worldCenterOfMass;mass+=body.mass; }
+                return mass>0 ? sum/mass : Vector2.zero;
+            }
+        }
         private GameObject ownedRoot;
         private PhysicsMaterial2D contactMaterial;
         private Rigidbody2D[] bodies;
@@ -82,7 +108,9 @@ namespace Evolution.Articulated.Unity
                     polygon.SetPath(0,path);polygon.sharedMaterial=contactMaterial;
                     var body=go.AddComponent<Rigidbody2D>();bodies[i]=body;
                     body.bodyType=RigidbodyType2D.Dynamic;body.mass=(float)bone.Mass;
-                    body.gravityScale=1f;body.linearDamping=.05f;body.angularDamping=.15f;
+                    body.gravityScale=isolatedJoint ? 0 : 1;
+                    body.linearDamping=isolatedJoint ? 0 : .05f;body.angularDamping=isolatedJoint ? 0 : .15f;
+                    body.constraints=RigidbodyConstraints2D.None;
                     body.collisionDetectionMode=CollisionDetectionMode2D.Continuous;
                     body.interpolation=RigidbodyInterpolation2D.Interpolate;
                     if(i==0) continue;
@@ -97,11 +125,12 @@ namespace Evolution.Articulated.Unity
                 int count=2*joints.Length;
                 muscles=new MuscleSpec[count];settings=new MuscleSettings[count];
                 commands=new double[count];activation=new double[count];tension=new double[count];
+                lengths=new double[count];lengthRates=new double[count];targets=new double[count];
                 forceA=new Vector2[count];pointA=new Vector2[count];pointB=new Vector2[count];
                 for(int i=0;i<count;i++)
                 {
                     muscles[i]=new MuscleSpec(Definition,i/2+1,i%2==0 ? 1 : -1);
-                    settings[i]=new MuscleSettings(muscles[i].RestLength);
+                    settings[i]=MuscleMechanics.DemonstrationSettings(muscles[i].RestLength);
                 }
                 ownedRoot.SetActive(true);
                 // Only overlapping neighbors are ignored; non-adjacent self-contact remains physical.
@@ -120,6 +149,7 @@ namespace Evolution.Articulated.Unity
                         || !bodies[i].gameObject.activeInHierarchy || !colliders[i].enabled
                         || (i>0 && (joints[i-1]==null || !joints[i-1].enabled)))
                         throw new InvalidOperationException("Physical topology was removed; recreate organism.");
+                PhysicsSteps++;
                 // Evaluate the whole force batch before publishing it to native physics.
                 for(int i=0;i<muscles.Length;i++)
                 {
@@ -131,6 +161,8 @@ namespace Evolution.Articulated.Unity
                     float rate=length>1e-8f ? Vector2.Dot(b.GetPointVelocity(pointB[i])-a.GetPointVelocity(pointA[i]),delta/length) : 0f;
                     activation[i]=MuscleMechanics.Activate(activation[i],musclesEnabled ? commands[i] : 0,8,Time.fixedDeltaTime);
                     tension[i]=musclesEnabled ? MuscleMechanics.Tension(settings[i],length,rate,activation[i]) : 0;
+                    lengths[i]=length;lengthRates[i]=rate;
+                    targets[i]=MuscleMechanics.TargetLength(settings[i],activation[i]);
                     Point2 f=MuscleMechanics.ForceOnParent(new Point2(pointA[i].x,pointA[i].y),
                         new Point2(pointB[i].x,pointB[i].y),tension[i]);
                     forceA[i]=new Vector2((float)f.X,(float)f.Y);
@@ -152,6 +184,7 @@ namespace Evolution.Articulated.Unity
             ClearCommands();
             if(activation!=null) Array.Clear(activation,0,activation.Length);
             if(tension!=null) Array.Clear(tension,0,tension.Length);
+            if(forceA!=null) Array.Clear(forceA,0,forceA.Length);
             if(ownedRoot!=null) ownedRoot.SetActive(false);
         }
         private void OnEnable()
