@@ -8,8 +8,8 @@ namespace Evolution.Creatures
     /// The automatic morph is a geometry demonstration, not a learning algorithm.
     /// </summary>
     [ExecuteAlways]
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer),
-        typeof(PolygonCollider2D), typeof(LineRenderer))]
+    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(PolygonCollider2D))]
+    [RequireComponent(typeof(LineRenderer))]
     public sealed class ProceduralCreature2D : MonoBehaviour
     {
         [System.Serializable]

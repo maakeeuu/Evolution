@@ -1,8 +1,8 @@
 # Evolution Source Workspace
 
-This directory is the active development workspace for the game's source files before Unity integration.
+This directory retains the canonical source and standalone checks. User-authorized runtime mirrors are now integrated into Assets/Evolution/EVCP1; see ../docs/UNITY_VALIDATION.md. Unity validation is pending.
 
-## Rules
+## Original source-only rules (historical phase; integration authorized 2026-11-24)
 
 - Put all newly created or modified game code and its supporting project files inside this directory.
 - Keep the source organized in focused subdirectories (for example: Code, Data, Art, Audio, Tests), but do not scatter active development files across the repository.
@@ -74,3 +74,12 @@ Use dedicated objects, not an existing unrelated collider that must survive remo
 
 AdapterSyntax is an SDK-only standalone C# 9 syntax/contracts check, NOT Unity API
 compilation. Tests/Standalone, Compatibility and AdapterSyntax stay outside Assets.
+
+## Integrated runtime mirror
+
+Only Code/ and Art/ are mirrored byte-for-byte into Assets/Evolution/EVCP1/.
+Keep both copies synchronized; Tests/verify_integration.py blocks drift in CI.
+Unity imports only Assets, so these retained sources do not create duplicate assemblies.
+Do not copy Tests/, global.json, Python or SDK tooling into Assets.
+New .meta files are intentionally left for Unity 6000.6.10f1 to generate; preserve and
+commit them after first import. No GUID-backed scene or prefab was hand-authored.

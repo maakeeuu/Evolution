@@ -33,3 +33,10 @@ Camera view, player control model, creature type, water/weather details, generat
 - CI runs for progress/decisions-only checkpoints as well as source changes and verifies the checked-out SHA so the reported main HEAD always has its own run.
 
 - Pin standalone SDK resolution to .NET 8 inside Evolution_Source and assert it in CI. Installing an SDK alone does not select it when hosted runners include newer SDKs; SDK-provided Roslyn must match the standalone verifier runtime.
+
+## Authorized EV-CP1 integration — 2026-11-24
+
+- Use additive Assets/Evolution/EVCP1 runtime mirrors; preserve Evolution_Source canonical sources and enforce byte equality in CI. Root source outside Assets is not imported by Unity, avoiding duplicate asmdefs.
+- Preserve legacy source/menu and namespace; change only the invalid four-argument RequireComponent declaration. Do not co-locate legacy/new render owners on the same GameObject.
+- Enable only the necessary Editor built-in Physics 2D module from the previously empty manifest; no external package or engine migration.
+- Prepare manual empty-scene/bootstrap instructions rather than hand-authoring scene GUIDs. Let the target Editor generate genuine .meta files and serialized scene references during user validation.

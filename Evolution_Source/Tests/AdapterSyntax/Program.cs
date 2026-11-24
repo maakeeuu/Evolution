@@ -11,14 +11,14 @@ internal static class Program
     {
         if (args.Length != 1) throw new ArgumentException("Pass the Evolution_Source directory.");
         string root = Path.GetFullPath(args[0]);
-        string[] directories = { Path.Combine(root,"Code","Unity"), Path.Combine(root,"Tests","Unity") };
+        string[] directories = { Path.Combine(root,"Code","Unity"), Path.Combine(root,"Tests","Unity"), Path.Combine(Directory.GetParent(root).FullName,"Assets") };
         string[] callbacks = { "Awake", "Start", "Update", "FixedUpdate", "OnEnable", "OnDisable", "OnDestroy", "OnValidate" };
         int files=0, behaviours=0, contracts=0;
         foreach (string directory in directories)
         foreach (string path in Directory.GetFiles(directory,"*.cs",SearchOption.AllDirectories).OrderBy(p=>p,StringComparer.Ordinal))
         {
             files++;
-            SyntaxTree tree=CSharpSyntaxTree.ParseText(File.ReadAllText(path),new CSharpParseOptions(LanguageVersion.CSharp9),path);
+            SyntaxTree tree=CSharpSyntaxTree.ParseText(File.ReadAllText(path),new CSharpParseOptions(LanguageVersion.CSharp9).WithPreprocessorSymbols("UNITY_EDITOR","ENABLE_LEGACY_INPUT_MANAGER","UNITY_INCLUDE_TESTS"),path);
             var errors=tree.GetDiagnostics().Where(d=>d.Severity==DiagnosticSeverity.Error).ToArray();
             if(errors.Length>0) throw new Exception(string.Join(Environment.NewLine,errors.Select(d=>d.ToString())));
             foreach(ClassDeclarationSyntax type in tree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())

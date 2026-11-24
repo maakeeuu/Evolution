@@ -7,12 +7,22 @@ on:
       - '.github/workflows/ev-cp1-core.yml'
       - 'docs/PROGRESS.md'
       - 'docs/DECISIONS.md'
+      - 'docs/UNITY_VALIDATION.md'
+      - 'README.md'
+      - 'Assets/**'
+      - 'Packages/**'
+      - 'ProjectSettings/**'
   pull_request:
     paths:
       - 'Evolution_Source/**'
       - '.github/workflows/ev-cp1-core.yml'
       - 'docs/PROGRESS.md'
       - 'docs/DECISIONS.md'
+      - 'docs/UNITY_VALIDATION.md'
+      - 'README.md'
+      - 'Assets/**'
+      - 'Packages/**'
+      - 'ProjectSettings/**'
   workflow_dispatch:
 permissions:
   contents: read

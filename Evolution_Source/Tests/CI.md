@@ -53,3 +53,12 @@ dotnet run --project Tests/AdapterSyntax/Evolution.AdapterSyntax.csproj -c Relea
 Historical checkout jobs receive the same ephemeral SDK policy because their old source
 has no global.json. Their original repository history is not modified. CI asserts 8.0.x
 before compilation and preserves the SDK version alongside the output logs.
+
+## Integrated Assets gate
+
+Current revisions also parse actual Assets C# sources (including legacy/editor source)
+with UNITY_EDITOR, ENABLE_LEGACY_INPUT_MANAGER and UNITY_INCLUDE_TESTS defined. This
+still performs syntax/contracts only, not Unity API compilation. The Python integration
+suite checks the exact runtime mirror, assembly separation, Resources key uniqueness,
+legacy preservation, engine version and required built-in Physics 2D module. CI triggers
+on Assets/Packages/ProjectSettings/README/manual-checklist changes as well.

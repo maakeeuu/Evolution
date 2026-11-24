@@ -4,6 +4,7 @@
 
 **Repository bootstrap:** committed.  
 **Procedural creature code:** committed.  
+**Unity integration:** prepared in Assets/Evolution/EVCP1 (2026-11-24); see docs/UNITY_VALIDATION.md.  
 **Unity Editor validation:** pending.  
 **Standalone C# validation:** passed in GitHub Actions (hardening runs #1 and #2; see below).  
 **Learning AI:** not implemented.  
@@ -137,3 +138,16 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Assets tree e9cbc5a33c1b38a0a30eed09a86bf8a0fc175c2b, Packages 2c20327ac0c1e78557b84d0221de2454d721623f, ProjectSettings 796cc0004f62f0667b1397e5e3f0e21305c38af7 remain unchanged from the baseline. No Unity process, project integration, PEE work, learning, adaptation or evolution was started; no force push/history rewriting.
 - Conditional readiness: ready to enter a separately authorized Unity 6000.6.10f1 integration/validation gate, not ready to claim EV-CP1 complete or production behavior. Run all five prepared PlayMode cases plus fault-injection/material ownership/manual contact and visual tests, compile the real Unity APIs and vector shader, and profile native publication/allocation behavior there. The precise user action for that future step is explicit authorization to perform controlled integration; no action is needed for current standalone checks.
 - This final documentation checkpoint must receive its own successful CI run; the preceding successful run is evidence for its parent, not a substitute for checking the new HEAD.
+
+## EV-CP1 Unity Integration & Validation — integration prepared, 2026-11-24
+
+- User explicitly authorized integration into the existing project, but prohibited Unity/Play Mode/Build execution. Initial actual main was 00c40c0139ae7ed6f2db7d1606665294ae60cf54 (newer than the user's remembered 3c85bc8). Verified its latest run 45417518464: all four jobs completed successfully for that exact workflow SHA.
+- Audited the complete existing Assets tree (one legacy runtime component, one Editor scene builder; no scenes/asmdefs/metas), empty package manifest and sole ProjectVersion setting. Safe additive destination: Assets/Evolution/EVCP1. No namespace/type/assembly-name collision found with Evolution.Creatures / Evolution.EditorTools.
+- Copied 13 runtime files from Evolution_Source/Code and Art byte-for-byte into Assets/Evolution/EVCP1, preserving Core/Unity asmdefs and one Resources/EvolutionVector2D shader. Retained canonical source outside Assets with a CI equality gate. No tests, Python, standalone projects, SDK or CI tools imported into Assets.
+- Preserved both old components. Necessary minimal legacy compile-blocker repair: split the unsupported four-argument RequireComponent into two legal attributes; no legacy gameplay rewrite. Existing Editor builder remains byte-identical and still creates the old demo.
+- Added only com.unity.modules.physics2d:1.0.0 (Editor built-in module needed by the existing/new Rigidbody2D and Collider2D use). No third-party package, Input System, SRP or Test Framework added. Unity version/ProjectSettings unchanged.
+- No GUID/meta/scene/prefab was fabricated. New .meta files must be generated/preserved by the user's first actual Editor import. Detailed fresh-scene setup, independent keyboard test, acceptance/failure/resource checks and known limitations are in docs/UNITY_VALIDATION.md; root/source README updated.
+- Added six integration reference/structure checks and extended Roslyn syntax coverage to actual Assets, including the legacy/editor sources. Workflow triggers now cover integration files/config/manual instructions. All new integration CI results must be checked against the published integration commit itself.
+- No Unity process was launched; C# binding against UnityEngine, shader compilation, native collision/render/resource lifecycle and five pending PlayMode tests remain UNVERIFIED. EV-CP1 is not declared complete. Next action belongs to the user: open 6000.6.10f1, import, follow the manual checklist, report results. No next game system until then.
+
+- Executed before publishing integration: 27/27 local Python reference/structure checks passed; all asmdef/project/manifest JSON/XML and workflow YAML parsed successfully. Actual C#/Roslyn results for this integration commit remain subject to its own CI run.

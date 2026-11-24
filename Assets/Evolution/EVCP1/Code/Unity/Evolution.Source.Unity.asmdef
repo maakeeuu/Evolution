@@ -1,0 +1,7 @@
+{
+  "name": "Evolution.Source.Unity",
+  "rootNamespace": "Evolution.Source.Unity",
+  "references": [
+    "Evolution.Source.Core"
+  ]
+}

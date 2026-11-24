@@ -1,0 +1,5 @@
+{
+  "name": "Evolution.Source.Core",
+  "rootNamespace": "Evolution.Source.Core",
+  "noEngineReferences": true
+}
