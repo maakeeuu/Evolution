@@ -1,5 +1,22 @@
 # Decisions — Evolution
 
+## Current confirmed project direction
+- Unity 6000.6.10f1; strict 2D.
+- The organism has procedural anatomy and continuous vector geometry.
+- The primary concept is one organism learning and changing during its own lifetime. Generations, reproduction, inheritance, death and rebirth are not mandatory mechanics.
+- Procedural development should be driven by deterministic, reproducible simulation rules, interaction and experience. A seed may reproduce initial conditions but must not replace the development mechanism.
+- The environment is natural only: terrain, slopes, depressions, rocks, roots, vegetation, water, currents, weather and other natural factors. No artificial traps or contrived obstacle courses.
+- Behavioral learning changes control and behavior; morphological adaptation changes anatomy. These are separate mechanisms.
+- EV-CP1 remains preserved as a radial technical fixture. Its oval is not the target organism anatomy.
+- EV-CP2 is based on a procedural skeleton, joints, force-producing muscle actuators, real 2D physical interaction and a continuous procedural body shell.
+- The initial organism should be minimal and stick-like, not a predetermined animal with fixed legs, head, tail or a predefined evolutionary tree.
+- Keep Evolution_Source/ canonical and isolate future EV-CP2 runtime files from Assets/Evolution/EVCP1/.
+- PEE is a separate project and must not be modified.
+- Full EV-CP2 requirements: docs/EV_CP2_SPEC.md. Agent kickoff instructions: docs/HANDOFF_EV_CP2.md.
+
+## Historical and temporary decisions below
+
+
 ## Confirmed
 - Unity 6000.6.10f1.
 - Strictly 2D.

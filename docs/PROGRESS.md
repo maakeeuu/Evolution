@@ -1,6 +1,37 @@
 # Progress — Evolution
 
-## Current milestone: EV-CP1 — Procedural Morphology
+## Current milestone: EV-CP2 — Articulated Organism
+
+**Milestone specification:** [EV_CP2_SPEC.md](EV_CP2_SPEC.md)  
+**Agent handoff:** [HANDOFF_EV_CP2.md](HANDOFF_EV_CP2.md)  
+**Implementation status at kickoff:** not started by the documentation commit.  
+**Previous milestone:** EV-CP1 technical radial-form fixture, integrated under Assets/Evolution/EVCP1/.
+
+### EV-CP2 target
+Move from the EV-CP1 radial oval to a minimal, genuinely articulated procedural organism:
+- procedural skeletal segments and joints;
+- meaningful joint constraints;
+- force-producing muscle actuators that physically affect motion;
+- interaction with 2D physics and surfaces;
+- a continuous procedural body shell that follows the articulated structure;
+- architecture that can later support sensing, behavioral learning and gradual morphological adaptation during one organism's lifetime.
+
+### Scope boundaries
+- Keep the game strictly 2D and target Unity 6000.6.10f1.
+- Preserve EV-CP1; do not replace or delete its runtime files.
+- Keep Evolution_Source/ canonical. When EV-CP2 Unity runtime integration is ready, use a separate destination such as Assets/Evolution/EVCP2/.
+- No mandatory generations, reproduction, inheritance, death or rebirth.
+- The world is intended to contain natural environmental conditions only. EV-CP2 focuses on the organism, not full biome or weather simulation.
+- No learning or morphological adaptation claims until actual mechanisms exist.
+- No changes to the separate PEE project.
+
+### Evidence policy
+Standalone tests, source inspection and CI do not prove UnityEngine API compilation, shader import, Play Mode, native physics or rendering. Record exactly which checks ran. Unity Editor validation must be performed in the target Editor; do not claim it was performed remotely.
+
+---
+
+## Historical milestone: EV-CP1 — Procedural Morphology
+
 
 **Repository bootstrap:** committed.  
 **Procedural creature code:** committed.  
