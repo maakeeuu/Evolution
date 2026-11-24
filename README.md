@@ -40,7 +40,9 @@ EV-CP1 интегрирован в Assets/Evolution/EVCP1/; каноническ
 - Канонический код: `Evolution_Source/Articulated/`, runtime-копия: `Assets/Evolution/EVCP2/`.
 - Процедурная цепь, ограниченные HingeJoint2D и парные pull-only мышечные силы.
 - Отдельный диагностический wave-driver (не обучение), skeleton/muscle view и первая patch-оболочка.
-- Быстрый вход: Empty Scene → пустой объект → **ArticulatedDemo2D** → Play локально.
+- Первый запуск: **Tools → Evolution → Create/Open EV-CP2 Isolated Joint Probe**, затем Play и native A/B/C/D.
+- После PASS: **Tools → Evolution → Create/Open EV-CP2 Demo**. Editor один раз сохраняет сцену; далее открывайте `Assets/Evolution/EVCP2/Scenes/EVCP2_Articulated.unity` → Play без ручной сборки.
+- Scene builder подготовлен; агент не запускал Editor и не выдаёт отсутствующий `.unity` за сохранённую сцену.
 - Подробный gate, автоматические/неподтверждённые проверки и ограничения:
   [EV_CP2_VALIDATION.md](docs/EV_CP2_VALIDATION.md).
 - EV-CP2 целиком не завершён: гладкая глобальная кожа, рост/ветвление и освоенная локомоция не заявляются.

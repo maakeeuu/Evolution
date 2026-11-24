@@ -10,7 +10,10 @@ class ArticulatedChecks(unittest.TestCase):
     def test_complete_runtime_mirror(self):
         mirror=ROOT/'Assets/Evolution/EVCP2'
         expected={p.relative_to(SOURCE) for p in SOURCE.rglob('*') if p.is_file() and p.suffix!='.meta'}
-        actual={p.relative_to(mirror) for p in mirror.rglob('*') if p.is_file() and p.suffix!='.meta'}
+        actual={p.relative_to(mirror) for p in mirror.rglob('*') if p.is_file() and p.suffix!='.meta' and 'Scenes' not in p.relative_to(mirror).parts}
+        for p in (mirror/'Scenes').glob('*'):
+            if p.is_file() and p.suffix!='.meta':
+                self.assertIn(p.name,{'EVCP2_Articulated.unity','EVCP2_IsolatedJoint.unity'})
         self.assertEqual(expected,actual)
         self.assertGreaterEqual(len(expected),11)
         for p in expected:self.assertEqual((SOURCE/p).read_bytes(),(mirror/p).read_bytes(),str(p))
@@ -32,6 +35,14 @@ class ArticulatedChecks(unittest.TestCase):
         d=(UNITY/'ArticulationDiagnostics2D.cs').read_text()
         for token in ['jointSpeed','jointAngle','GetAppliedForce','GetLengthRate','GetTargetLength','CenterOfMass','isActiveAndEnabled']:
             self.assertIn(token,d)
+    def test_explicit_safe_scene_builder(self):
+        s=(SOURCE/'Editor/ArticulatedSceneBuilder.cs').read_text()
+        for token in ['Tools/Evolution/Create/Open EV-CP2 Demo','EVCP2_Articulated.unity','EVCP2_IsolatedJoint.unity','SaveModifiedScenesIfUserWantsTo','File.Exists(path)','SaveScene(scene,path)','AddComponent<SingleJointProbe2D>','AddComponent<ArticulatedDemo2D>']:
+            self.assertIn(token,s)
+        for forbidden in ['InitializeOnLoad','EditorBuildSettings','DeleteAsset','WriteAllText']:
+            self.assertNotIn(forbidden,s)
+        editor=json.loads((SOURCE/'Editor/Evolution.Articulated.Editor.asmdef').read_text())
+        self.assertEqual(editor['includePlatforms'],['Editor'])
     def test_engine_independent_assembly(self):
         core=json.loads((SOURCE/'Core/Evolution.Articulated.Core.asmdef').read_text())
         self.assertTrue(core['noEngineReferences'])

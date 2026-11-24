@@ -1,0 +1,11 @@
+{
+  "name": "Evolution.Articulated.Editor",
+  "rootNamespace": "Evolution.Articulated.EditorTools",
+  "references": [
+    "Evolution.Articulated.Unity"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": true
+}

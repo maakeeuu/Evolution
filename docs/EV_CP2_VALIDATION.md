@@ -122,3 +122,14 @@ CI только разбирает синтаксис этих исходник�
 - FAIL: приложите полный Result, Snapshot и Console. Не принимайте изменение цвета или positive tension за PASS. ABORTED при disable требует нового Play.
 
 Только после PASS изолированного режима проверяйте поверхность 60 игровых секунд: падение, contact, max anchor gap<.02 m, limits ±40° с solver tolerance, отсутствие разлёта/сильного дрожания. Отдельно passive и wave drive. Локомоция не обещана. Автоматические PlayMode cases лишь подготовлены, **не запускались**.
+
+## Checkpoint B: одна команда вместо ручной сборки сцены
+
+Агент **подготовил builder**, но не создавал/сохранял `.unity`: Editor здесь отсутствует.
+1. После импорта выберите **Tools → Evolution → Create/Open EV-CP2 Isolated Joint Probe**. Editor создаст и сохранит `Assets/Evolution/EVCP2/Scenes/EVCP2_IsolatedJoint.unity` с настроенным bootstrap. Нажмите Play, дождитесь PASS/FAIL Result; выполните native gate A прежде поверхности.
+2. После PASS выберите **Tools → Evolution → Create/Open EV-CP2 Demo**. Editor создаст `Assets/Evolution/EVCP2/Scenes/EVCP2_Articulated.unity` с ArticulatedDemo2D.
+3. Далее достаточно открыть сохранённый `.unity` из Project → Play. Камера/физические объекты создаются единственным bootstrap во время Play; ручные GameObject не нужны.
+4. Повторите меню дважды: существующая сцена должна только открыться, без второго bootstrap. Изменения сохранённой сцены не сбрасываются. Проверьте Cancel на предложении сохранить другую dirty-сцену: она остаётся открыта. Menu в Play выдаёт сообщение и не меняет сцены.
+5. Сохраните в Git реальные `.unity` и `.meta`, созданные Editor. Не удаляйте старые метаданные. EV-CP1 и Build Settings не изменяются; автозапуска при открытии проекта нет.
+
+Более ранняя инструкция Empty Scene остаётся только историческим/аварийным путём. Основной путь — это меню, затем сохранённая сцена. Истинность Unity API/сериализации/повторного открытия проверяется локально, не Roslyn/YAML.
