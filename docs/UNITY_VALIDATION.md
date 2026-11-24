@@ -151,3 +151,13 @@ Commit SHA, точную версию Editor, результат каждого 
 со stack trace (если есть), pipeline/Input Handling, короткое видео морфинга/контакта и
 новые Unity-generated .meta/сцену отдельным коммитом. До этого следующая игровая система
 не начинается и EV-CP1 не объявляется полностью завершённым.
+
+
+## User-confirmed shader correction — 2026-11-24
+
+The first local Play Mode inspection exposed a Built-in pipeline shader-pass mismatch:
+`EvolutionVector2D.shader` used `LightMode=SRPDefaultUnlit`. The user changed that tag
+to `Always` in the integrated Assets copy and confirmed that the filled green creature
+and gray obstacle then rendered. The canonical source and runtime mirror must stay
+byte-identical; the repository synchronization commit records the same correction in
+both locations. This is a rendering fix only, not a biological simulation milestone.

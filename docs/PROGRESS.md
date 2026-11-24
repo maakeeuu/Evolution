@@ -151,3 +151,10 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - No Unity process was launched; C# binding against UnityEngine, shader compilation, native collision/render/resource lifecycle and five pending PlayMode tests remain UNVERIFIED. EV-CP1 is not declared complete. Next action belongs to the user: open 6000.6.10f1, import, follow the manual checklist, report results. No next game system until then.
 
 - Executed before publishing integration: 27/27 local Python reference/structure checks passed; all asmdef/project/manifest JSON/XML and workflow YAML parsed successfully. Actual C#/Roslyn results for this integration commit remain subject to its own CI run.
+
+
+## User-run Unity rendering fix — 2026-11-24
+
+- During local Unity 6000.6.10f1 validation, the user confirmed that both runtime objects had assigned meshes/materials and were moving, but their fill geometry was not rendered normally in the Built-in Render Pipeline.
+- Replacing the shader pass tag `LightMode=SRPDefaultUnlit` with `LightMode=Always` in the local runtime shader made both the creature and obstacle render as filled shapes. This is direct user-observed Play Mode evidence for the Built-in pipeline fixture.
+- Synchronize the canonical `Evolution_Source/Art/Resources/EvolutionVector2D.shader` and integrated mirror `Assets/Evolution/EVCP1/Art/Resources/EvolutionVector2D.shader` to the tested tag. This fixes rendering only; it does not add skeletal anatomy, muscles, locomotion articulation, learning, or biological adaptation.

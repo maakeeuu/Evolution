@@ -40,3 +40,9 @@ Camera view, player control model, creature type, water/weather details, generat
 - Preserve legacy source/menu and namespace; change only the invalid four-argument RequireComponent declaration. Do not co-locate legacy/new render owners on the same GameObject.
 - Enable only the necessary Editor built-in Physics 2D module from the previously empty manifest; no external package or engine migration.
 - Prepare manual empty-scene/bootstrap instructions rather than hand-authoring scene GUIDs. Let the target Editor generate genuine .meta files and serialized scene references during user validation.
+
+
+## User-confirmed Built-in shader correction — 2026-11-24
+
+- In the target Unity 6000.6.10f1 Built-in Render Pipeline, the user locally observed that `LightMode=SRPDefaultUnlit` left the procedural mesh fill invisible while the selected-object outline remained visible.
+- Changing the pass tag to `LightMode=Always` made the creature fill and obstacle render in Play Mode. Treat this as a user-validated correction for the current Built-in baseline, not as evidence of SRP compatibility.

@@ -9,7 +9,7 @@ Shader "Evolution/Vector2D"
         Blend SrcAlpha OneMinusSrcAlpha
         Pass
         {
-            Tags { "LightMode"="SRPDefaultUnlit" }
+            Tags { "LightMode"="Always" }
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
