@@ -48,9 +48,23 @@ Eight samples per edge; 1,328 samples for the default four-segment strip/collide
 ## Automated evidence / limits
 - Baseline commit c6412a6a266a8e90b45793c652628733be7f9c68: exact-HEAD CI run 45450749392 completed/success before skin replacement.
 - Local Python reference/structure suite: 46 tests pass, including 91 independent straight/C/S/extreme reference configurations, unchanged physical blobs, exact preserved EV-CP1 tree and both source mirrors.
-- Actual C# tests add 107 pose configurations, exact repeatability, stable strip topology/manifold edge counts, positive triangles, independent proper-intersection checks, widths/axis following, changed-pose geometry, float conversion, invalid inputs, excessive gaps/turns and a self-intersecting loop. Default-anatomy sampled discrepancy is gated at < .025 m in both directions. New exact-HEAD C# CI results must be read after publication.
+- Actual C# tests add 107 pose configurations, exact repeatability, stable strip topology/manifold edge counts, positive triangles, independent proper-intersection checks, widths/axis following, changed-pose geometry, float conversion, invalid inputs, excessive gaps/turns and a self-intersecting loop. Default-anatomy sampled discrepancy is gated at < .025 m in both directions. Exact-HEAD C# results are recorded below.
 - Two additional PlayMode tests are PREPARED, NOT RUN: synchronous skin refresh must preserve native positions/velocities/masses/collider paths/joints/actuator state; real muscle-driven hinge deflection must change the actual published skin Mesh. Existing nine CP2 native cases remain pending too.
 - No packages/Unity/ProjectSettings changes, no CP1 modification, no PEE work. No force push or rewritten history.
 - No native screenshots, scene serialization, Unity API binding, rendering, physics, resource profiling or Build was executed here. Arbitrary self-contact/closed-loop poses are not supported by this single simple strip and are rejected rather than geometrically untangled. The metrics sampler and diagnostic allocations need local profiling; 20x throughput is not promised.
 
 EV-CP3 remains NOT ACCEPTED until target-Editor straight/bent shell-only visual acceptance and actual physical articulation are observed.
+
+
+## Verified standalone implementation gate
+Skin commit: 16c74443b9deb2eda18950bb07887597738d441f.
+Run: https://github.com/maakeeuu/Evolution/actions/runs/45452425253 — completed/success, all four matrix jobs checked against this head SHA.
+
+Current job 138652819931 passed C#9/netstandard2.1 compilation, actual C# execution, Roslyn adapter syntax/contracts and Python. Annotations report:
+- EV-CP3: 84,137 assertions; 107 pose configurations.
+- Default-dimension sampled coverage suite (2..8 segments and straight/C/S/bent cases): max skin outside physical union 0.009437489 m; max physical coverage outside skin 0.001429827 m. These are synthetic pose tests of the actual C# geometry, NOT native runtime measurements and NOT certified continuous-distance bounds.
+- Largest miter across the 107 cases: 1.154700538 (60-degree extreme tests). Default 40-degree miter is 1.064177772.
+- Existing CP2: 29,205 C# assertions; CP1: 1,226,597 assertions.
+- Local Python: 46/46, including 91 independent numerical reference configurations. JSON/XML/YAML parse checks pass.
+
+Remote Assets tree confirms EVCP1 remains 379cde3c17ac8dafcd0e5d9a6f12edfd46f33f13; legacy Scripts remains f0949f2077599a7a01733f10556f0a3f6a25f5ac. No Unity acceptance follows from these numbers. This result-recording documentation commit must receive its own CI; the final report records that check separately.

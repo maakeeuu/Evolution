@@ -261,3 +261,11 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Native physics/anatomy source blobs, EV-CP1 full tree, packages and engine preserved. Sampled bidirectional skin/collider coverage is exposed in Inspector; mismatch is documented, not claimed zero. See EV_CP3_VALIDATION.md.
 - Local Python 46/46 pass; 91 independent geometry references; JSON/XML/YAML parsed. Actual C# additions cover 107 poses and require this checkpoint's CI; previous CI is not substituted.
 - Two CP3 PlayMode tests prepared but NOT compiled/imported/run in Unity. Existing nine CP2 cases still pending. No .unity/.meta/GUID or native screenshot fabricated. No Editor/Play Mode/physics/render/Build acceptance. EV-CP3 is not complete.
+
+
+## EV-CP3 verified standalone result — native still pending
+- Baseline c6412a6a266a8e90b45793c652628733be7f9c68: exact-HEAD run 45450749392 completed/success.
+- Skin implementation 16c74443b9deb2eda18950bb07887597738d441f: run 45452425253 completed/success; all four exact-head jobs checked. Current job 138652819931 passed compatibility, actual C#, Roslyn and Python.
+- EV-CP3 actual C#: 84,137 assertions / 107 poses; sampled synthetic-pose maxima skin outside collider union .009437489 m, physical coverage outside skin .001429827 m. Max miter 1.154700538 across 60-degree extremes. These are not native runtime/continuous-distance measurements.
+- Existing CP2 29,205 / CP1 1,226,597 C# assertions remain passing. Local Python 46/46, 91 independent reference configurations, JSON/XML/YAML pass. CP1 and legacy Scripts tree hashes unchanged on remote.
+- Target-Editor API/shader import, real scene serialization, actual articulation, shell-only straight/bent appearance and runtime mismatch remain UNVERIFIED. Two CP3 PlayMode cases prepared, NOT RUN. Do not call EV-CP3 complete. Final documentation HEAD requires its own CI result, reported separately.
