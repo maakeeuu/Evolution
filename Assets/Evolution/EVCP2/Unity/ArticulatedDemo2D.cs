@@ -7,6 +7,7 @@ namespace Evolution.Articulated.Unity
     [DisallowMultipleComponent]
     public sealed class ArticulatedDemo2D : MonoBehaviour
     {
+        public ArticulatedOrganism2D Organism { get; private set; }
         private GameObject ownedRoot;
         private Mesh terrainMesh;
         private Material terrainMaterial;
@@ -41,7 +42,7 @@ namespace Evolution.Articulated.Unity
                 ground.AddComponent<MeshRenderer>().sharedMaterial=terrainMaterial;
                 var organism=new GameObject("Articulated organism");organism.transform.SetParent(ownedRoot.transform,false);
                 organism.transform.position=new Vector3(-1.8f,1f,0);
-                organism.AddComponent<ArticulatedOrganism2D>();
+                Organism=organism.AddComponent<ArticulatedOrganism2D>();
                 organism.AddComponent<ArticulatedOrganismView2D>();
                 organism.AddComponent<MuscleWaveDriver2D>();
                 organism.AddComponent<ArticulationDiagnostics2D>();
@@ -57,7 +58,7 @@ namespace Evolution.Articulated.Unity
             if(ownedRoot!=null) { ownedRoot.SetActive(false);Destroy(ownedRoot); }
             if(terrainMesh!=null) Destroy(terrainMesh);
             if(terrainMaterial!=null) Destroy(terrainMaterial);
-            ownedRoot=null;terrainMesh=null;terrainMaterial=null;
+            ownedRoot=null;terrainMesh=null;terrainMaterial=null;Organism=null;
         }
     }
 }

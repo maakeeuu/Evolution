@@ -62,6 +62,26 @@ internal static class Program
             }
         }
         // Reproduce the actual default tip load and attachment geometry, not a generic lever.
+        foreach(double previous in new[]{0,.3,1,2,5})
+        foreach(double selected in new[]{0,1,2,5,20})
+        {
+            var lease=new TimeScaleLease();lease.Acquire(previous);
+            Check(lease.Owns(1),"acquire starts at 1x");
+            Check(lease.TrySelect(1,selected),"supported mode");
+            Check(lease.Owns(selected),"selected ownership");
+            Check(lease.TryRelease(selected,out double restore),"restore on disable/destroy");
+            Near(restore,previous,0,"restore exact previous time scale");
+            Check(!lease.TryRelease(selected,out _),"idempotent double release");
+            lease.Acquire(.75);Check(!lease.TryRelease(.5,out _),"external writer is preserved");
+            Check(!lease.TrySelect(.5,20),"released controller cannot write");
+        }
+        foreach(double bad in new[]{-1,3,4,double.NaN,double.PositiveInfinity})
+        {
+            var lease=new TimeScaleLease();lease.Acquire(1);
+            Reject(()=>lease.TrySelect(1,bad));
+        }
+        foreach(double invalid in new[]{-1,double.NaN,double.PositiveInfinity,double.NegativeInfinity})
+            Reject(()=>new TimeScaleLease().Acquire(invalid));
         var neutral=ChainDefinition.Create();
         for(int child=1;child<neutral.Count;child++)
         {

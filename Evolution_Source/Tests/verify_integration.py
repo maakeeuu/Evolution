@@ -57,7 +57,7 @@ class IntegrationTests(unittest.TestCase):
         version = (ROOT / 'ProjectSettings/ProjectVersion.txt').read_text().strip()
         self.assertEqual(version, 'm_EditorVersion: 6000.6.10f1')
         manifest = json.loads((ROOT / 'Packages/manifest.json').read_text())
-        self.assertEqual(manifest['dependencies'], {'com.unity.modules.physics2d': '1.0.0'})
+        self.assertEqual(manifest['dependencies'], {'com.unity.modules.physics2d': '1.0.0','com.unity.modules.imgui': '1.0.0'})
 
     def test_existing_meta_guids_are_well_formed_and_unique(self):
         guids = []

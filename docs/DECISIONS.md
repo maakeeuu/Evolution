@@ -87,3 +87,8 @@ Camera view, player control model, creature type, water/weather details, generat
 
 ## EV-CP2 scene workflow B — 2026-11-24
 - Use an Editor-only assembly and explicit menu commands, never an import/startup simulation hook. Create/save a scene only when its target path does not exist; otherwise open without mutation. Preserve unsaved scenes through Unity's save/cancel prompt. Native scene GUIDs and script references must be produced by Unity 6000.6.10f1 locally. No fake YAML placeholders.
+
+## EV-CP2 simulation time C — 2026-11-24
+- Keep fixedDeltaTime in game seconds invariant rather than trading away joint accuracy at speed. Do not increase maximumDeltaTime to conceal low throughput; display measured FixedUpdate advancement separately from requested scale.
+- Use IMGUI (one required Unity built-in module) instead of pulling in uGUI/Input System for five buttons. Game View focus is required; keyboard shortcuts use IMGUI key events, ignoring modifiers. Controls are confined to an explicitly created demo, not CP1 or project startup.
+- A single static adapter owner plus independently tested pure value lease controls writes. Restore the prior per-enable value only if last written value still matches; preserve a detected external writer. Same-value writes cannot be detected without cooperation from all time managers. Disable duplicate controllers rather than multiplying or fighting time scales.

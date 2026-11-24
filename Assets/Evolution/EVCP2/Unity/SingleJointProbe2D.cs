@@ -20,6 +20,12 @@ namespace Evolution.Articulated.Unity
         private bool checks=true;
         private void Start()
         {
+            if(Time.timeScale!=1 || Mathf.Abs(Time.fixedDeltaTime-.02f)>1e-6f
+                || Physics2D.simulationMode!=SimulationMode2D.FixedUpdate)
+            {
+                result="BLOCKED: native gate requires timeScale=1, fixedDeltaTime=.02, Physics2D FixedUpdate. No global settings were changed.";
+                Complete=true;Passed=false;Debug.LogWarning(result,this);return;
+            }
             cameraObject=new GameObject("Isolated joint camera");cameraObject.transform.SetParent(transform,false);
             cameraObject.transform.localPosition=new Vector3(.85f,0,-10);
             var camera=cameraObject.AddComponent<Camera>();camera.orthographic=true;camera.orthographicSize=1.5f;

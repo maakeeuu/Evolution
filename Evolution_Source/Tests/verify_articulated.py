@@ -43,6 +43,15 @@ class ArticulatedChecks(unittest.TestCase):
             self.assertNotIn(forbidden,s)
         editor=json.loads((SOURCE/'Editor/Evolution.Articulated.Editor.asmdef').read_text())
         self.assertEqual(editor['includePlatforms'],['Editor'])
+    def test_time_control_preserves_fixed_step_and_ownership(self):
+        s=(UNITY/'SimulationTimeControl2D.cs').read_text()
+        for token in ['Time.timeScale=1','Time.timeScale=scale','TryRelease','OnDisable','OnDestroy','KeyCode.Space','KeyCode.Alpha1','KeyCode.Alpha4','{0,1,2,5,20}','advancedGameTime/elapsed','Time.realtimeSinceStartupAsDouble']:
+            self.assertIn(token,s)
+        for forbidden in ['Time.fixedDeltaTime=','Time.fixedDeltaTime =','Time.maximumDeltaTime=','Input.GetKey','linearVelocity=','Physics2D.Simulate']:
+            self.assertNotIn(forbidden,s)
+        demo=(UNITY/'ArticulatedDemo2D.cs').read_text()
+        self.assertNotIn('RequireComponent(typeof(SimulationTimeControl2D))',demo)
+        self.assertIn('bootstrap.AddComponent<SimulationTimeControl2D>()',(SOURCE/'Editor/ArticulatedSceneBuilder.cs').read_text())
     def test_engine_independent_assembly(self):
         core=json.loads((SOURCE/'Core/Evolution.Articulated.Core.asmdef').read_text())
         self.assertTrue(core['noEngineReferences'])
