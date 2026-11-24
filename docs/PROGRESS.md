@@ -31,5 +31,16 @@
 ## Handoff
 The first implementation handoff is recorded in [HANDOFF_EV_CP1.md](HANDOFF_EV_CP1.md). It accurately records what is implemented, what was statically checked, and what still requires Unity Editor validation.
 
-## Next
+## Previous next step (superseded by source-only development)
 Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create Morphology Demo**, press Play, and inspect the body, outline, collider and Console. Fix any import/runtime issues before adding movement or AI.
+
+
+## EV-CP1 source checkpoint 1 — 2026-11-24
+
+- Active work is now exclusively in `Evolution_Source/`; existing `Assets/`, `Packages/`, `ProjectSettings/` are unchanged. No Unity integration/build is authorized yet.
+- Preserved the bounded radial contour and stable fan; extracted engine-independent morphology, geometry and validation into `Code/Core`.
+- Added finite-value rejection, complete non-adjacent segment/touch checks and exact exponential target response. No learning, adaptation policy or inheritance is implied by interpolation.
+- Added a dependency-free .NET 8 console suite against actual C# sources and an independent Python mathematical/structural reference.
+- Executed: 5 Python test groups passed (128 extreme shapes, 80 seeded random shapes, 100 transition frames, constant-target responses at 30/50/60/144 Hz and source contracts). These are reference checks, not execution of the C# implementation.
+- Not executed: C# compilation (no dotnet/csc/mcs installed; external DNS unavailable), Unity import, Editor, Play Mode or Unity tests.
+- Next: implement a source-only Unity adapter that applies one contour to mesh and PolygonCollider2D in FixedUpdate, without the old four-type RequireComponent declaration or OnValidate state reset.
