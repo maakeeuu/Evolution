@@ -60,7 +60,7 @@ class SourceTests(unittest.TestCase):
         self.assertIn('UNITY_INCLUDE_TESTS',asm['defineConstraints'])
         self.assertIn('Evolution.Source.Unity',asm['references'])
         tests=(ROOT/'Tests/Unity/PlayMode/CreatureIntegrationTests.cs').read_text()
-        self.assertEqual(tests.count('[UnityTest]'),3)
+        self.assertEqual(tests.count('[UnityTest]'),5)
         project=(ROOT/'Tests/Standalone/Evolution.Core.Tests.csproj').read_text()
         self.assertNotIn('Tests/Unity',project)
         self.assertNotIn('UnityEngine',project)

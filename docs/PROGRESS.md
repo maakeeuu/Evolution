@@ -102,3 +102,13 @@ Open the repository in Unity 6000.6.10f1, run **Tools → Evolution → Create M
 - Motor checks shape readiness in FixedUpdate (not across unordered Awakes); fixture removes partial objects if a body/obstacle initialization fails.
 - Body disable continues to freeze a valid shape rather than delete its collision; failure and destruction are distinct teardown paths.
 - Locally executed: 21 Python reference/structural tests. These lifecycle fixes are still static/structural evidence until real Unity tests run. This checkpoint's new CI must be checked before publishing the next checkpoint.
+
+## EV-CP1 Integration Readiness — checkpoint 2, 2026-11-24
+
+- Verified checkpoint 1 publication a80e5e3cda871f06632f65ed0a0fe95d96f1d135 and all four CI jobs with exactly that head_sha in run 45414947740; current C# execution, netstandard2.1 compilation and 21 Python tests passed. This was checked before publishing checkpoint 2.
+- Added actual C# publication regressions: bit-identical float output for unchanged shape, immutable fan topology, warmed core hot-path managed-allocation probe, zero-response/large-time behavior and invalid buffer rejection.
+- Added a third standalone project, AdapterSyntax, using the .NET SDK's Roslyn assemblies. It parses real Unity adapter and pending PlayMode source as C# 9, checking callback signatures/component filenames/RequireComponent arity. It does not compile Unity APIs or execute Unity and uses no Unity stubs.
+- CI now verifies the checkout SHA explicitly, runs all three available standalone projects for current, and also triggers on PROGRESS/DECISIONS-only changes. Full core/syntax logs are retained as artifacts.
+- Expanded pending PlayMode suite from three to five tests with obstacle native resource teardown and late Rigidbody wake-up. These are NOT executed or compiled against Unity.
+- Locally reran 21 independent Python reference/structural checks and parsed project/assembly/workflow files. Results of the new C# allocation/syntax probes must be verified in this exact commit's CI, not inferred from checkpoint 1.
+- Source is prepared for a controlled future integration gate, not accepted as a Unity-validated build. Remaining checks: actual Unity C#/shader import, resource/failure lifecycle, native Mesh/Collider equality, sleeping/resizing contacts, CCD and visual smoothness. No new game systems or Unity integration were performed.

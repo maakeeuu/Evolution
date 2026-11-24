@@ -22,3 +22,19 @@ Runs #1 and #2 completed successfully on 2026-11-24:
 
 Tests/Unity/PlayMode is excluded from these standalone projects. Its tests are pending
 real Unity compilation/Play Mode, not part of the successful CI assertion count.
+
+## Integration Readiness checks
+
+Every current job verifies its actual checkout SHA, builds the netstandard2.1 core,
+runs the net8.0 core tests, builds/runs AdapterSyntax and runs Python checks. Progress
+and decisions changes also trigger this same workflow, preventing an untested docs-only
+HEAD at a checkpoint. Historical jobs intentionally skip newer projects they lack.
+
+AdapterSyntax uses Roslyn assemblies shipped with the installed .NET 8 SDK; no NuGet
+or Unity package is added. It parses actual adapters/PlayMode source using C# 9 and
+checks MonoBehaviour filenames, callback signatures and RequireComponent arity.
+It does NOT resolve UnityEngine types, compile against Unity APIs, run callbacks, or
+simulate resources/physics. No Unity mocks/stubs are used or claimed as validation.
+
+The core allocation probe warms up reusable buffers then measures only the core math/
+validation hot path. A zero result is not a measurement of Unity APIs or the renderer.

@@ -83,6 +83,7 @@ internal static class Program
         Reject(() => PlanarMotion.ApproachVelocity(new Point2(0, 0), new Point2(1, 0), -1, 8, 1));
         Reject(() => PlanarMotion.ApproachVelocity(new Point2(0, 0), new Point2(1, 0), 2, 8, -1));
         RegressionTests.Run(Check);
+        PublicationTests.Run(Check);
         Console.WriteLine("PASS: " + checks + " C# core assertions");
     }
 }

@@ -28,3 +28,6 @@ Camera view, player control model, creature type, water/weather details, generat
 - Body and obstacle own their generated geometry and collider path while attached. Use dedicated prototype objects; externally supplied Mesh/Material assets are never destroyed. Previous render slots/property blocks are restored only if the component's assignment is still present; teardown disables its collider rather than restoring an unknown prior collider path.
 - Initialization failure is fail-closed: rendering/collision disabled, partial owned resources released, component disabled, one error. Recreate the component after fixing configuration; re-enable is not an implicit retry. A normal disable/re-enable preserves the valid shape.
 - Motor readiness is evaluated in FixedUpdate after Awake ordering has settled. Late-added Rigidbody2D is resolved when geometry next changes.
+
+- Independent adapter verification uses actual Roslyn C# 9 parsing with SDK-provided compiler assemblies, not Unity stubs. This is a syntax/contract gate only; Unity API binding and native behavior remain explicitly pending.
+- CI runs for progress/decisions-only checkpoints as well as source changes and verifies the checked-out SHA so the reported main HEAD always has its own run.

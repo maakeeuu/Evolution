@@ -118,5 +118,39 @@ namespace Evolution.Source.Tests
             for(int frame=0;frame<30;frame++) yield return new WaitForFixedUpdate();
             Assert.That(rb.linearVelocity.magnitude, Is.LessThan(.02f));
         }
+
+        [UnityTest]
+        public IEnumerator RemovingObstacleDisablesCollisionAndReleasesOwnedObjects()
+        {
+            GameObject item = Create("Obstacle teardown test", Vector3.zero);
+            VectorObstacle2D obstacle = item.AddComponent<VectorObstacle2D>();
+            MeshFilter filter = item.GetComponent<MeshFilter>();
+            Mesh ownedMesh = filter.sharedMesh;
+            Material ownedMaterial = item.GetComponent<MeshRenderer>().sharedMaterial;
+            PolygonCollider2D polygon = item.GetComponent<PolygonCollider2D>();
+            Assert.That(obstacle.IsInitialized, Is.True);
+            Object.Destroy(obstacle);
+            yield return null;
+            yield return null;
+            Assert.That(polygon.enabled, Is.False);
+            Assert.That(filter.sharedMesh == null, Is.True);
+            Assert.That(ownedMesh == null, Is.True);
+            Assert.That(ownedMaterial == null, Is.True);
+        }
+
+        [UnityTest]
+        public IEnumerator LateRigidBodyIsAwakenedByGeometryChange()
+        {
+            GameObject item = Create("Late Rigidbody test", Vector3.zero);
+            CreatureBody2D shape = item.AddComponent<CreatureBody2D>();
+            yield return null;
+            Rigidbody2D rb = item.AddComponent<Rigidbody2D>();
+            rb.gravityScale = 0;
+            rb.Sleep();
+            shape.SetMorphologyTarget(new Morphology(1.2,.8,.1,-.1,.08));
+            yield return new WaitForFixedUpdate();
+            Assert.That(rb.IsAwake(), Is.True);
+            AssertGeometry(item);
+        }
     }
 }

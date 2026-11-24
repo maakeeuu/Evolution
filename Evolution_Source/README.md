@@ -53,8 +53,24 @@ The adapter validates float-quantized points before publication, skips unchanged
 collider data and wakes an attached Rigidbody2D when geometry changes. GeometryRevision
 counts actual publications and is available for diagnostics/tests, not gameplay logic.
 
-Tests/Unity/PlayMode contains three opt-in future integration tests: exact mesh/collider
+Tests/Unity/PlayMode contains five opt-in future integration tests: exact mesh/collider
 coordinates through morphing, unchanged-publication/lifecycle behavior, and moving/
 morphing contact with a tall obstacle. They have NOT run or compiled against Unity.
 Import them only after integration is authorized and the target project's Unity Test
 Framework is available. Do not add packages or copy all Tests into Assets automatically.
+
+## Integration Readiness lifecycle
+
+Body and obstacle expose IsInitialized. Failed initialization disables rendering,
+collision and the component, releasing partial generated resources. Fix configuration
+and recreate the failed component; toggling enabled is not a retry. Normal body disable
+freezes a valid shape, retaining its mesh/collider. Motor readiness is checked in the
+physics callback, not between unordered Awakes. The fixture aborts partial setup.
+
+Mesh/Material ownership is explicit: supplied assets are never destroyed; previous
+render assignments/property blocks are restored only while the component still owns
+the assignment. Collider paths are component-owned; teardown disables the collider.
+Use dedicated objects, not an existing unrelated collider that must survive removal.
+
+AdapterSyntax is an SDK-only standalone C# 9 syntax/contracts check, NOT Unity API
+compilation. Tests/Standalone, Compatibility and AdapterSyntax stay outside Assets.

@@ -44,3 +44,16 @@ They do not replace manual 30/60/144 FPS or 120-second visual/contact inspection
 Shape-growth depenetration and any resulting contact impulses remain a Unity risk.
 WakeUp and avoiding unnecessary SetPath calls reduce avoidable contact-state churn;
 they are not a claim that resizing contacts or CCD have been validated.
+
+## Integration Readiness additions — not executed
+
+Five PlayMode tests are now prepared. The two added cases cover owned obstacle
+mesh/material teardown after component removal and waking a Rigidbody2D attached after
+body Start. All five still require compilation/execution in the target Unity version.
+
+Also inject an invalid custom material without _Color (or temporarily omit the resource
+shader) on an inactive test object before activation: expect one initialization error,
+IsInitialized=false, disabled render/collision and released partial resources. Re-enable
+must not create a half-initialized component or repeat exceptions every physics tick.
+Verify assigned external materials are not destroyed and previous property blocks and
+render slots are restored on teardown. These fault cases remain manual/pending Unity.

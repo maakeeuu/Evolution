@@ -5,10 +5,14 @@ on:
     paths:
       - 'Evolution_Source/**'
       - '.github/workflows/ev-cp1-core.yml'
+      - 'docs/PROGRESS.md'
+      - 'docs/DECISIONS.md'
   pull_request:
     paths:
       - 'Evolution_Source/**'
       - '.github/workflows/ev-cp1-core.yml'
+      - 'docs/PROGRESS.md'
+      - 'docs/DECISIONS.md'
   workflow_dispatch:
 permissions:
   contents: read
@@ -37,6 +41,11 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      - name: Verify exact checked out revision
+        shell: bash
+        env:
+          EXPECTED_REVISION: ${{ matrix.revision == 'current' && github.sha || matrix.revision }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
       - name: Compile Unity-compatible core API surface
         if: matrix.revision == 'current'
         shell: bash
@@ -47,6 +56,12 @@ jobs:
           set -euo pipefail
           dotnet run --project Evolution_Source/Tests/Standalone/Evolution.Core.Tests.csproj --configuration Release | tee "$RUNNER_TEMP/core-tests.log"
           echo "::notice title=CSharp assertions::$(grep '^PASS:' "$RUNNER_TEMP/core-tests.log")"
+      - name: Parse actual adapters and Unity tests with CSharp 9 Roslyn
+        if: matrix.revision == 'current'
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet run --project Evolution_Source/Tests/AdapterSyntax/Evolution.AdapterSyntax.csproj --configuration Release -- Evolution_Source | tee "$RUNNER_TEMP/adapter-syntax.log"
       - name: Independent Python references and wiring checks
         shell: bash
         run: python3 -m unittest discover -s Evolution_Source/Tests -p 'verify_*.py' -v
@@ -55,6 +70,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: core-output-${{ matrix.revision }}
-          path: ${{ runner.temp }}/core-tests.log
+          path: |
+            ${{ runner.temp }}/core-tests.log
+            ${{ runner.temp }}/adapter-syntax.log
           if-no-files-found: ignore
           retention-days: 14
